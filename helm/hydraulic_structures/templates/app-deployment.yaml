@@ -1,0 +1,185 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+{{ include "app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.tethys.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "app.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "app.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ALLOWED_HOSTS
+              value: "\"[
+                {{- range .Values.ingress.hosts -}}
+                {{ .host }} {{- print ", " }}
+                {{- end -}}
+                localhost, 127.0.0.1]\""
+            - name: TETHYS_PUBLIC_HOST
+              value: {{ (index .Values.ingress.hosts 0).host | quote }}
+            {{- if .Values.postgis }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgis.password | quote }}
+            - name: APP_DB_HOST
+              value: {{ .Values.postgis.fullnameOverride | quote }}
+            - name: TETHYS_DB_HOST
+              value: {{ .Values.postgis.fullnameOverride | quote }}
+            {{- end }}
+            {{- if .Values.tethys }}
+            - name: TETHYS_DB_NAME
+              value: {{ .Values.tethys.database.tethys_db_name | quote }}
+            - name: TETHYS_DB_USERNAME
+              value: {{ .Values.tethys.database.tethys_db_username | quote }}
+            - name: TETHYS_DB_PASSWORD
+              value: {{ .Values.tethys.database.tethys_db_password | quote }}
+            - name: TETHYS_DB_PORT
+              value: "5432"
+            - name: TETHYS_DB_SUPERUSER
+              value: {{ .Values.tethys.database.app_db_username | quote }}
+            - name: TETHYS_DB_SUPERUSER_PASS
+              value: {{ .Values.tethys.database.app_db_password | quote }}
+            - name: PORTAL_SUPERUSER_NAME
+              value: {{ .Values.tethys.super_user.username | quote }}
+            - name: PORTAL_SUPERUSER_EMAIL
+              value: {{ .Values.tethys.super_user.email | quote }}
+            - name: PORTAL_SUPERUSER_PASSWORD
+              value: {{ .Values.tethys.super_user.password | quote }}
+            - name: APP_DB_PORT
+              value: "5432"
+            - name: APP_DB_USERNAME
+              value: {{ .Values.tethys.database.app_db_username | quote }}
+            - name: APP_DB_PASSWORD
+              value: {{ .Values.tethys.database.app_db_password | quote }}
+            {{- end }}
+            {{- if .Values.geoserver }}
+            - name: TETHYS_GS_USERNAME
+              value: {{ .Values.geoserver.username | quote }}
+            - name: TETHYS_GS_PASSWORD
+              value: {{ .Values.geoserver.password | quote }}
+            - name: TETHYS_GS_PROTOCOL
+              value: 'http'
+            - name: TETHYS_GS_HOST
+              value: {{ .Values.geoserver.fullnameOverride | quote }}
+            - name: TETHYS_GS_PORT
+              value: "8181"
+            - name: TETHYS_GS_HOST_PUB
+              value: {{ (index .Values.ingress.hosts 0).host | quote }}
+            - name: TETHYS_GS_PORT_PUB
+              value: "{{ if $.Values.ingress.tls }}443{{else}}80{{ end }}"
+            - name: TETHYS_GS_PROTOCOL_PUB
+              value: "http{{ if $.Values.ingress.tls }}s{{ end }}"
+            {{- end }}
+            {{- if .Values.condor }}
+            - name: TETHYS_CLUSTER_IP
+              value: {{ .Values.condor.fullnameOverride | quote }}
+            - name: TETHYS_CLUSTER_USERNAME
+              value: "condor"
+            - name: TETHYS_CLUSTER_PKEY_PASSWORD
+              value: {{ .Values.condor.keypass }}
+            - name: TETHYS_CLUSTER_PKEY_FILE
+              value: "/var/lib/tethys_persist/keys/condorkey"
+            {{- end }}
+            {{- if .Values.redis }}
+            - name: CHANNEL_LAYERS_BACKEND
+              value: "channels_redis.core.RedisChannelLayer"
+            - name: CHANNEL_LAYERS_CONFIG
+              value:  "\"{\"hosts\": [[{{ .Values.redis.fullnameOverride }}, 6379]]}\""
+            {{- end }}
+            {{- if .Values.tethys }}
+              {{- if .Values.tethys.settings }}
+              {{- if .Values.tethys.settings.client_max_body_size }}
+            - name: CLIENT_MAX_BODY_SIZE
+              value: {{ .Values.tethys.settings.client_max_body_size | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.file_upload_max_memory_size }}
+            - name: FILE_UPLOAD_MAX_MEMORY_SIZE
+              value: {{ .Values.tethys.settings.file_upload_max_memory_size | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.tethys_settings_flags }}
+            - name: TETHYS_SETTINGS_FLAGS
+              value: {{ .Values.tethys.settings.tethys_settings_flags | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.title }}
+            - name: TITLE
+              value: {{ .Values.tethys.settings.title | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.primary_color }}
+            - name: PRIMARY_COLOR
+              value: {{ .Values.tethys.settings.primary_color | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.secondary_color }}
+            - name: SECONDARY_COLOR
+              value: {{ .Values.tethys.settings.secondary_color | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.background_color }}
+            - name: BACKGROUND_COLOR
+              value: {{ .Values.tethys.settings.background_color | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.google_client_id }}
+            - name: GOOGLE_CLIENT_ID
+              value: {{ .Values.tethys.settings.google_client_id | quote }}
+              {{- end }}
+              {{- if .Values.tethys.settings.google_client_pass }}
+            - name: GOOGLE_CLIENT_PASS
+              value: {{ .Values.tethys.settings.google_client_pass | quote }}
+              {{- end }}
+              {{- end }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.tethys.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.condor }}
+            - name: condor-ssh-key
+              readOnly: true
+              mountPath: /tmp/keys
+            {{- end }}
+            {{- if .Values.tethys }}
+            - name: workspace-pv
+              mountPath: '/var/lib/tethys_persist'
+            {{- end }}
+
+      volumes:
+        {{- if .Values.condor }}
+        - name: condor-ssh-key
+          secret:
+            defaultMode: 0600
+            secretName: condor-ssh-key
+        {{- end }}
+        {{- if .Values.tethys }}
+        - name: workspace-pv
+          persistentVolumeClaim:
+            claimName: workspace-pvc
+        {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

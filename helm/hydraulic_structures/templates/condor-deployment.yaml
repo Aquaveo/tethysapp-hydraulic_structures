@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.condor.fullnameOverride }}
+  labels:
+{{ include "app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.condor.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.condor.fullnameOverride }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.condor.fullnameOverride }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.condor.fullnameOverride }}
+          image: "{{ .Values.condor.image.repository }}:{{ .Values.condor.image.tag }}"
+          imagePullPolicy: {{ .Values.condor.image.pullPolicy }}
+          ports:
+            - name: ssh
+              containerPort: 22
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /usr/local/bin/htcondor-schedd-liveness
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            tcpSocket:
+              port: 22
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          resources:
+          {{- toYaml .Values.condor.resources | nindent 12 }}
+          volumeMounts:
+            - name: condor-ssh-pubkey
+              readOnly: true
+              mountPath: /var/lib/condor/keys
+            - name: workspace-pv
+              mountPath: '/mnt/file_database_root'
+      volumes:
+        - name: condor-ssh-pubkey
+          secret:
+            defaultMode: 0600
+            secretName: condor-ssh-pubkey
+        - name: workspace-pv
+          persistentVolumeClaim:
+            claimName: workspace-pvc
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

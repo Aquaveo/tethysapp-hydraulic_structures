@@ -1,0 +1,26 @@
+/* Remove circular cut-out around app logo */
+#app-header .tethys-app-header #nav-title-wrapper .icon-wrapper img {
+    border-radius: 0;
+}
+
+/* Style alerts to show up over the map, correctly centered with nav open or closed. */
+.alert {
+    position: absolute;
+    z-index: 1001;
+    width: 100%;
+    text-align: center;
+    border-radius: 0;
+}
+
+#app-content-wrapper.show-nav #app-content .alert {
+    padding-right: 415px;
+}
+
+/* Hide back button */
+#nav-header #back-button {
+    display: none;
+}
+
+#nav-header #nav-title {
+    margin-left: 0;
+}
