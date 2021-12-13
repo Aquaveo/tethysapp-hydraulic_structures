@@ -33,7 +33,6 @@ class DamSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
         column2 = []
 
         tab_content = [column1, column2]
-        import pdb; pdb.set_trace()
         # Generate details about file collections and add to column 2
         fc_details = self.get_file_collections_details(session, resource)
         column2.extend(fc_details)

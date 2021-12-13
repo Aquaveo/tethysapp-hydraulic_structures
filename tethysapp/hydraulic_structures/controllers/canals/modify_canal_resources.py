@@ -8,16 +8,17 @@ from tethys_sdk.compute import get_scheduler
 from tethys_sdk.workspaces import user_workspace
 from tethysext.atcore.controllers.app_users import ModifyResource
 from tethysext.atcore.services.file_database import FileDatabaseClient
-from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
-from tethysapp.hydraulic_structures.services.upload.models import UploadCropWatWorkflow
+from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import \
+    HydraulicStructuresSpatialManager
+from tethysapp.hydraulic_structures.services.upload import UploadCanalWorkflow
 
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
-__all__ = ['ModifyHydraulicStructuresModelResource']
+__all__ = ['ModifyHydraulicStructuresCanalResource']
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ModifyHydraulicStructuresModelResource(ModifyResource):
+class ModifyHydraulicStructuresCanalResource(ModifyResource):
     """
        Controller that handles the new and edit pages for HYDRAULICSTRUCTURES model resources.
     """
@@ -32,8 +33,8 @@ class ModifyHydraulicStructuresModelResource(ModifyResource):
     file_upload_required = True
     file_upload_multiple = False
     file_upload_accept = ".zip"
-    file_upload_label = "Model Files"
-    file_upload_help = "Upload Model Files"
+    file_upload_label = "Canal Files"
+    file_upload_help = "Upload Canal Files"
     file_upload_error = "Must provide file(s)."
     template_name = 'hydraulic_structures/resources/modify_model_resource.html'
 
@@ -72,7 +73,7 @@ class ModifyHydraulicStructuresModelResource(ModifyResource):
 
             # Store file in FileCollection
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
-            file_collection = file_database.new_collection(meta={'display_name': 'Model Files'})
+            file_collection = file_database.new_collection(meta={'display_name': 'Canal Files'})
 
             for filename in os.listdir(file_dir):
                 if filename == '__extent__.geojson':
@@ -105,10 +106,10 @@ class ModifyHydraulicStructuresModelResource(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
 
             # Create the condor job and submit
-            job = UploadCropWatWorkflow(
+            job = UploadCanalWorkflow(
                 app=app,
                 user=request.user,
-                workflow_name=f'upload_cropwat_model_{resource_id}',
+                workflow_name=f'upload_canal_{resource_id}',
                 workspace_path=job_path,
                 resource_db_url=app.get_persistent_store_database(app.DATABASE_NAME, as_url=True),
                 resource=resource,

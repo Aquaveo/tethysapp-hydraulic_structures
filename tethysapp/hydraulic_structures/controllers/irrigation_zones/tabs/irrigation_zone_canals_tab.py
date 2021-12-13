@@ -3,7 +3,7 @@ from django.shortcuts import reverse
 from tethysext.atcore.controllers.resources.tabs import ResourceListTab
 
 
-class IrrigationZoneModelsTab(ResourceListTab):
+class IrrigationZoneCanalsTab(ResourceListTab):
 
     def get_resources(self, request, resource, session, *args, **kwargs):
         """

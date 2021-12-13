@@ -22,19 +22,19 @@ class HydraulicStructuresIrrigationZoneResource(SpatialResource, FileCollectionM
     file_collections = relationship(FileCollection, secondary=resource_file_collection_association,
                                     backref=backref('irrigation_zone', uselist=False))
 
-    models = relationship(
-        'HydraulicStructuresModelResource',
+    canals = relationship(
+        'HydraulicStructuresCanalResource',
         primaryjoin='or_('
                     'func.ST_Contains(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresModelResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresCanalResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_CoveredBy(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresModelResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresCanalResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_Overlaps(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresModelResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresCanalResource.extent)).as_comparison(1, 2)'
                     ')',
-        backref=backref('model_irrigation_zones', uselist=True),
+        backref=backref('canal_irrigation_zones', uselist=True),
         viewonly=True,
         uselist=True,
         sync_backref=False

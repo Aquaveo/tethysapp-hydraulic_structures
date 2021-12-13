@@ -10,7 +10,7 @@ from tethysext.atcore.services.file_database import FileCollectionClient, FileDa
 
 
 # DO NOT REMOVE, need to import all the subclasses of ResourceWorkflowStep for the polymorphism to work.
-from tethysapp.hydraulic_structures.models.resources.model_resource import HydraulicStructuresModelResource
+from tethysapp.hydraulic_structures.models.resources.canal_resource import HydraulicStructuresCanalResource
 from tethysapp.hydraulic_structures.models.resources.dam_resource import HydraulicStructuresDamResource
 from tethysext.atcore.models.resource_workflow_results import *  # noqa: F401, F403
 from tethysext.atcore.models.resource_workflow_steps import *  # noqa: F401, F403
@@ -58,7 +58,7 @@ def main(resource_db_session, model_db_session, resource, workflow, step, gs_pri
     existing_model_id = form_values['select_existing_cropwat_model']
 
     # Get base ModelResource from selected base model
-    existing_model = resource_db_session.query(HydraulicStructuresModelResource).get(existing_model_id)
+    existing_model = resource_db_session.query(HydraulicStructuresCanalResource).get(existing_model_id)
 
     file_database_id = workflow.get_attribute('file_database_id')
     root_directory = workflow.get_attribute('linux_fdb_root')

@@ -11,7 +11,7 @@ __all__ = ['IrrigationZoneDetails']
 import logging
 from tethysext.atcore.controllers.resources import TabbedResourceDetails
 from tethysapp.hydraulic_structures.controllers.irrigation_zones.tabs import IrrigationZoneSummaryTab, IrrigationZoneWorkflowsTab, \
-    IrrigationZoneDamsTab, IrrigationZoneModelsTab, IrrigationZoneFilesTab
+    IrrigationZoneDamsTab, IrrigationZoneCanalsTab, IrrigationZoneFilesTab
 
 
 log = logging.getLogger(f'tethys.{__name__}')
@@ -24,7 +24,7 @@ class IrrigationZoneDetails(TabbedResourceDetails):
     base_template = 'hydraulic_structures/base.html'
     tabs = (
         {'slug': 'summary', 'title': 'Summary', 'view': IrrigationZoneSummaryTab},
-        {'slug': 'models', 'title': 'Models', 'view': IrrigationZoneModelsTab},
+        {'slug': 'models', 'title': 'Canals', 'view': IrrigationZoneCanalsTab},
         {'slug': 'dams', 'title': 'Dams', 'view': IrrigationZoneDamsTab},
         {'slug': 'files', 'title': 'Files', 'view': IrrigationZoneFilesTab},
         {'slug': 'workflows', 'title': 'Workflows', 'view': IrrigationZoneWorkflowsTab},
