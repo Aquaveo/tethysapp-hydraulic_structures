@@ -12,7 +12,7 @@ from django.contrib import messages
 from tethys_sdk.gizmos import MapView, MVView
 
 from tethysext.atcore.services.map_manager import MapManagerBase
-from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresModelResource, HydraulicStructuresDamResource
+from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresCanalResource, HydraulicStructuresDamResource
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
@@ -103,10 +103,10 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
                 base_extents = irrigation_zone_layer.legend_extent
 
-            # If no resource_id, compose map of all mission boundaries with models and dams
+            # If no resource_id, compose map of all mission boundaries with canals and dams
             else:
                 irrigation_zone_layers = []
-                model_layers = []
+                canal_layers = []
                 dam_layers = []
 
                 # Build irrigation zone layers
@@ -122,18 +122,18 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
                 map_layers.extend(irrigation_zone_layers)
 
-                # Build model layers
-                models = session.query(HydraulicStructuresModelResource) \
-                    .filter(HydraulicStructuresModelResource.extent is not None) \
+                # Build canal layers
+                canals = session.query(HydraulicStructuresCanalResource) \
+                    .filter(HydraulicStructuresCanalResource.extent is not None) \
                     .all()
-                for model in models:
-                    model_layer = self.build_boundary_layer_for_resource(
-                        model, layer_variable='model_resource', selectable=False
+                for canal in canals:
+                    canal_layer = self.build_boundary_layer_for_resource(
+                        canal, layer_variable='canal_resource', selectable=False
                     )
-                    if model_layer is not None:
-                        model_layers.append(model_layer)
+                    if canal_layer is not None:
+                        canal_layers.append(canal_layer)
 
-                map_layers.extend(model_layers)
+                map_layers.extend(canal_layers)
 
                 # Build dam layers
                 dams = session.query(HydraulicStructuresDamResource) \
@@ -158,9 +158,9 @@ class HydraulicStructuresMapManager(MapManagerBase):
                         visible=True,
                     ),
                     self.build_layer_group(
-                        id='model_layers',
-                        display_name='Models',
-                        layers=model_layers,
+                        id='canal_layers',
+                        display_name='Canals',
+                        layers=canal_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),

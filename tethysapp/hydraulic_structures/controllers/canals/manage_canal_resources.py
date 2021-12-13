@@ -11,12 +11,11 @@ from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ManageHydraulicStructuresModelResources(ManageResources, FileCollectionsControllerMixin):
+class ManageHydraulicStructuresCanalResources(ManageResources, FileCollectionsControllerMixin):
     """
     Controller for manage_resources page.
     """
     base_template = 'hydraulic_structures/base.html'
-    MODEL_ENGINE_SPATIAL_MANAGER_LOOKUP = {'CropWat': HydraulicStructuresSpatialManager}
 
     def get_launch_url(self, request, resource):
         """
@@ -48,10 +47,10 @@ class ManageHydraulicStructuresModelResources(ManageResources, FileCollectionsCo
             log=log
         )
 
-        # Get geoserver engine and remove geoserver layers.
+        # Delete extent layer
         gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
-
-        # Delete model elevations for a given model.
-        model_engine = 'CropWat'
-        x_spatial_manager = self.MODEL_ENGINE_SPATIAL_MANAGER_LOOKUP.get(model_engine)(gs_engine)
-        x_spatial_manager.delete_all_layers(resource_id=str(resource.id))
+        hydraulic_structures_spatial_manager = HydraulicStructuresSpatialManager(gs_engine)
+        hydraulic_structures_spatial_manager.delete_extent_layer(
+            datastore_name=HydraulicStructuresSpatialManager.DATASTORE,
+            resource_id=str(resource.id),
+        )
