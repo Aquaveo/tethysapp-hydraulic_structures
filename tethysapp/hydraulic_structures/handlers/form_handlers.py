@@ -12,7 +12,6 @@ def form_handler(document):
 
     current_step_id = document.request.url_route['kwargs']['step_id']
     current_step = session.query(ResourceWorkflowStep).get(current_step_id)
-    import pdb; pdb.set_trace()
     param_class = current_step.options['param_class']
     panel = pn.Row(param_class.param, param_class.view)
 

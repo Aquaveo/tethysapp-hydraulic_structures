@@ -14,7 +14,7 @@
 {% block app_navigation_items %}
   {% url 'hydraulic_structures:home' as home_url %}
   {% url 'hydraulic_structures:irrigation_zones_manage_resources' as manage_resource_url %}
-  {% url 'hydraulic_structures:datasets_manage_resources' as manage_datasets_resource_url %}
+  {% url 'hydraulic_structures:dams_manage_resources' as manage_dams_resource_url %}
   {% url 'hydraulic_structures:models_manage_resources' as manage_models_resource_url %}
   {% url 'hydraulic_structures:app_users_manage_users' as manage_users_url %}
   {% url 'hydraulic_structures:app_users_manage_organizations' as manage_organizations_url %}
@@ -23,7 +23,7 @@
   <li {% if request.path == home_url %}class="active"{% endif %}><a href="{{ home_url }}">Map</a></li>
   {% if show_resources_link %}
     <li {% if request.path == manage_resource_url %}class="active"{% endif %}><a href="{{ manage_resource_url }}">Irrigation Zones</a></li>
-    <li {% if request.path == manage_datasets_resource_url %}class="active"{% endif %}><a href="{{ manage_datasets_resource_url }}">Datasets</a></li>
+    <li {% if request.path == manage_dams_resource_url %}class="active"{% endif %}><a href="{{ manage_dams_resource_url }}">Dams</a></li>
     <li {% if request.path == manage_models_resource_url %}class="active"{% endif %}><a href="{{ manage_models_resource_url }}">Models</a></li>
 {% endif %}
   {% if show_users_link %}

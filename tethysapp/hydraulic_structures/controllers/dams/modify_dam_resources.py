@@ -8,19 +8,19 @@ from tethys_sdk.compute import get_scheduler
 from tethys_sdk.workspaces import user_workspace
 from tethysext.atcore.controllers.app_users import ModifyResource
 from tethysext.atcore.services.file_database import FileDatabaseClient
-from tethysapp.hydraulic_structures.services.upload import UploadDatasetWorkflow
+from tethysapp.hydraulic_structures.services.upload import UploadDamWorkflow
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
 
-__all__ = ['ModifyHydraulicStructuresDatasetResource']
+__all__ = ['ModifyHydraulicStructuresDamResource']
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ModifyHydraulicStructuresDatasetResource(ModifyResource):
+class ModifyHydraulicStructuresDamResource(ModifyResource):
     """
-    Controller that handles the new and edit pages for HYDRAULICSTRUCTURES dataset resources.
+    Controller that handles the new and edit pages for HYDRAULICSTRUCTURES dam resources.
     """
     # Srid field options
     include_srid = True
@@ -33,9 +33,9 @@ class ModifyHydraulicStructuresDatasetResource(ModifyResource):
     file_upload_required = True
     file_upload_multiple = False
     file_upload_accept = ".zip"
-    file_upload_label = "Dataset Files"
-    file_upload_help = "Upload an archive containing the dataset files. Include a __extent__.geojson file  to set " \
-                       "the spatial extent for the dataset."
+    file_upload_label = "Dam Files"
+    file_upload_help = "Upload an archive containing the dam files. Include a __extent__.geojson file  to set " \
+                       "the spatial extent for the dam."
     file_upload_error = "Must provide file(s)."
 
     @user_workspace
@@ -61,9 +61,9 @@ class ModifyHydraulicStructuresDatasetResource(ModifyResource):
             # Get file database id
             file_database_id = app.get_custom_setting('file_database_id')
 
-            # Create file collection and relationship with dataset resource
+            # Create file collection and relationship with dam resource
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
-            file_collection = file_database.new_collection(meta={'display_name': 'Dataset Files'})
+            file_collection = file_database.new_collection(meta={'display_name': 'Dam Files'})
             resource.file_collections.append(file_collection.instance)
 
             for item in os.listdir(file_dir):
@@ -99,10 +99,10 @@ class ModifyHydraulicStructuresDatasetResource(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
 
             # Create the condor job and submit
-            job = UploadDatasetWorkflow(
+            job = UploadDamWorkflow(
                 app=app,
                 user=request.user,
-                workflow_name=f'upload_dataset_{resource_id}',
+                workflow_name=f'upload_dam_{resource_id}',
                 workspace_path=job_path,
                 resource_db_url=app.get_persistent_store_database(app.DATABASE_NAME, as_url=True),
                 resource=resource,

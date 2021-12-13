@@ -93,20 +93,23 @@ class HydraulicStructures(TethysAppBase):
         Add controllers
         """
         from tethysext.atcore.urls import app_users, spatial_reference, resource_workflows, resources
-        from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
-        from tethysapp.hydraulic_structures.models.resources.irrigation_zone_resource import HydraulicStructuresIrrigationZoneResource
-        from tethysapp.hydraulic_structures.models.resources.dataset_resource import HydraulicStructuresDatasetResource
+        from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import\
+            HydraulicStructuresSpatialManager
+        from tethysapp.hydraulic_structures.models.resources.irrigation_zone_resource import\
+            HydraulicStructuresIrrigationZoneResource
+        from tethysapp.hydraulic_structures.models.resources.dam_resource import HydraulicStructuresDamResource
         from tethysapp.hydraulic_structures.models.resources.model_resource import HydraulicStructuresModelResource
         from tethysapp.hydraulic_structures.models.app_users import HydraulicStructuresOrganization
         from tethysapp.hydraulic_structures.models.hydraulic_structures_workflows import HYDRAULICSTRUCTURES_WORKFLOWS
 
-        from tethysapp.hydraulic_structures.controllers.irrigation_zones import ModifyIrrigationZone, ManageIrrigationZones, \
-            IrrigationZoneDetails
-        from tethysapp.hydraulic_structures.controllers.map_view.hydraulic_structures_model_map_view import HydraulicStructuresModelMapView
-        from tethysapp.hydraulic_structures.controllers.datasets import ManageHydraulicStructuresDatasetResources, ModifyHydraulicStructuresDatasetResource, \
-            HydraulicStructuresDatasetResourceDetails
-        from tethysapp.hydraulic_structures.controllers.models import ManageHydraulicStructuresModelResources, HydraulicStructuresModelResourceDetails,\
-            ModifyHydraulicStructuresModelResource
+        from tethysapp.hydraulic_structures.controllers.irrigation_zones import ModifyIrrigationZone,\
+            ManageIrrigationZones, IrrigationZoneDetails
+        from tethysapp.hydraulic_structures.controllers.map_view.hydraulic_structures_model_map_view import\
+            HydraulicStructuresModelMapView
+        from tethysapp.hydraulic_structures.controllers.dams import ManageHydraulicStructuresDamResources,\
+            ModifyHydraulicStructuresDamResource, HydraulicStructuresDamResourceDetails
+        from tethysapp.hydraulic_structures.controllers.models import ManageHydraulicStructuresModelResources,\
+            HydraulicStructuresModelResourceDetails, ModifyHydraulicStructuresModelResource
         from tethysapp.hydraulic_structures.controllers.workflows.hydraulic_structures_workflow_view import HydraulicStructuresWorkflowRouter
         from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
@@ -130,20 +133,20 @@ class HydraulicStructures(TethysAppBase):
         )
         url_maps.extend(app_users_urls)
 
-        dataset_resources_urls = resources.urls(
+        dam_resources_urls = resources.urls(
             url_map_maker=UrlMap,
             app=self,
             persistent_store_name='primary_db',
             base_template='hydraulic_structures/base.html',
             custom_models=(
-                HydraulicStructuresDatasetResource,
+                HydraulicStructuresDamResource,
             ),
             custom_controllers=(
-                ManageHydraulicStructuresDatasetResources,
-                ModifyHydraulicStructuresDatasetResource,
+                ManageHydraulicStructuresDamResources,
+                ModifyHydraulicStructuresDamResource,
             )
         )
-        url_maps.extend(dataset_resources_urls)
+        url_maps.extend(dam_resources_urls)
 
         model_resources_urls = resources.urls(
             url_map_maker=UrlMap,
@@ -183,13 +186,13 @@ class HydraulicStructures(TethysAppBase):
 
         url_maps.extend((
             UrlMap(
-                name='dataset_details_tab',
-                url='hydraulic_structures/datasets/{resource_id}/details/{tab_slug}',
-                controller=HydraulicStructuresDatasetResourceDetails.as_controller(
+                name='dam_details_tab',
+                url='hydraulic_structures/dams/{resource_id}/details/{tab_slug}',
+                controller=HydraulicStructuresDamResourceDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',
                     _Organization=HydraulicStructuresOrganization,
-                    _Resource=HydraulicStructuresDatasetResource
+                    _Resource=HydraulicStructuresDamResource
                 ),
                 regex=['[0-9A-Za-z-_.]+', '[0-9A-Za-z-_.{}]+']
             ),

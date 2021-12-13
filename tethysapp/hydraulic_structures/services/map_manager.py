@@ -12,7 +12,7 @@ from django.contrib import messages
 from tethys_sdk.gizmos import MapView, MVView
 
 from tethysext.atcore.services.map_manager import MapManagerBase
-from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresModelResource, HydraulicStructuresDatasetResource
+from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresModelResource, HydraulicStructuresDamResource
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
@@ -103,11 +103,11 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
                 base_extents = irrigation_zone_layer.legend_extent
 
-            # If no resource_id, compose map of all mission boundaries with models and datasets
+            # If no resource_id, compose map of all mission boundaries with models and dams
             else:
                 irrigation_zone_layers = []
                 model_layers = []
-                dataset_layers = []
+                dam_layers = []
 
                 # Build irrigation zone layers
                 irrigation_zones = session.query(HydraulicStructuresIrrigationZoneResource) \
@@ -135,18 +135,18 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
                 map_layers.extend(model_layers)
 
-                # Build dataset layers
-                datasets = session.query(HydraulicStructuresDatasetResource) \
-                    .filter(HydraulicStructuresDatasetResource.extent is not None) \
+                # Build dam layers
+                dams = session.query(HydraulicStructuresDamResource) \
+                    .filter(HydraulicStructuresDamResource.extent is not None) \
                     .all()
-                for dataset in datasets:
-                    dataset_layer = self.build_boundary_layer_for_resource(
-                        dataset, layer_variable='dataset_resource', selectable=False
+                for dam in dams:
+                    dam_layer = self.build_boundary_layer_for_resource(
+                        dam, layer_variable='dam_resource', selectable=False
                     )
-                    if dataset_layer is not None:
-                        dataset_layers.append(dataset_layer)
+                    if dam_layer is not None:
+                        dam_layers.append(dam_layer)
 
-                map_layers.extend(dataset_layers)
+                map_layers.extend(dam_layers)
 
                 # Make Layer Groups
                 layer_groups.extend([
@@ -165,9 +165,9 @@ class HydraulicStructuresMapManager(MapManagerBase):
                         visible=False,
                     ),
                     self.build_layer_group(
-                        id='dataset_layers',
-                        display_name='Datasets',
-                        layers=dataset_layers,
+                        id='dam_layers',
+                        display_name='Dams',
+                        layers=dam_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),

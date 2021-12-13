@@ -11,7 +11,7 @@ from tethysext.atcore.services.file_database import FileCollectionClient, FileDa
 
 # DO NOT REMOVE, need to import all the subclasses of ResourceWorkflowStep for the polymorphism to work.
 from tethysapp.hydraulic_structures.models.resources.model_resource import HydraulicStructuresModelResource
-from tethysapp.hydraulic_structures.models.resources.dataset_resource import HydraulicStructuresDatasetResource
+from tethysapp.hydraulic_structures.models.resources.dam_resource import HydraulicStructuresDamResource
 from tethysext.atcore.models.resource_workflow_results import *  # noqa: F401, F403
 from tethysext.atcore.models.resource_workflow_steps import *  # noqa: F401, F403
 from tethysext.atcore.services.resource_workflows.decorators import workflow_step_job
@@ -312,21 +312,21 @@ def main(resource_db_session, model_db_session, resource, workflow, step, gs_pri
     map_result = step.result.get_result_by_codename('map_demand')
     map_result.reset()
 
-    datasets = resource_db_session.query(HydraulicStructuresDatasetResource).\
-        filter(HydraulicStructuresDatasetResource.extent.ST_Intersects(existing_model.extent)).all()
+    dams = resource_db_session.query(HydraulicStructuresDamResource).\
+        filter(HydraulicStructuresDamResource.extent.ST_Intersects(existing_model.extent)).all()
 
-    for dataset in datasets:
-        geojson_model_boundary, extents = generate_geojson_setting(dataset)
+    for dam in dams:
+        geojson_model_boundary, extents = generate_geojson_setting(dam)
 
-        map_result.add_geojson_layer(geojson=geojson_model_boundary, layer_name=dataset.name.lower().replace(" ", "_"),
-                                     layer_title=dataset.name, layer_variable=str(dataset.id),
-                                     layer_id=f'dataset_{str(dataset.id)}', extent=extents)
+        map_result.add_geojson_layer(geojson=geojson_model_boundary, layer_name=dam.name.lower().replace(" ", "_"),
+                                     layer_title=dam.name, layer_variable=str(dam.id),
+                                     layer_id=f'dam_{str(dam.id)}', extent=extents)
 
     # Add existing model too
     geojson_model_boundary, extents = generate_geojson_setting(existing_model, properties=chart_data)
     map_result.add_geojson_layer(geojson=geojson_model_boundary, layer_name=existing_model.name.lower().replace(" ", "_"),
                                  layer_title=existing_model.name, layer_variable=str(existing_model.id),
-                                 layer_id=f'model_{str(dataset.id)}', extent=extents)
+                                 layer_id=f'model_{str(dam.id)}', extent=extents)
     # Commit
     resource_db_session.commit()
     print(f'Successfully retrieved data and saved to file_database_id {file_database_id} ')

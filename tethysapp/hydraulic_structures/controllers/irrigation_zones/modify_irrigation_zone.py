@@ -60,7 +60,7 @@ class ModifyIrrigationZone(ModifyResource):
         # Only do the following if creating a new irrigation zone
         if not editing:
             # TODO: The logic to unzip the file, set extent from __extent__.geojson, and save in file collection
-            # TODO: is copied from ModifyHydraulicStructuresDatasetResource. Refactor to use generalized function in future.
+            # TODO: is copied from ModifyHydraulicStructuresDamResource. Refactor to use generalized function in future.
             files = resource.get_attribute('files')
             file_dir = os.path.dirname(files[0])
             with zipfile.ZipFile(files[0], "r") as zip_ref:

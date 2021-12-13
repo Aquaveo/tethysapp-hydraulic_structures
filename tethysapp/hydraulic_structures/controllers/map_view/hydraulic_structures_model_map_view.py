@@ -86,7 +86,6 @@ class HydraulicStructuresModelMapView(MapView):
             dict: modified context dictionary.
         """  # noqa: E501
         # Run super class get context to get context from MapView
-        import pdb; pdb.set_trace()
         context = super().get_context(request, session, resource, context, model_db, *args, **kwargs)
         # create legend scales if resource_id is given
         if resource:

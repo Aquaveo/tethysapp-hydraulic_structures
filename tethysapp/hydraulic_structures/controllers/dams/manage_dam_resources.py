@@ -11,7 +11,7 @@ from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ManageHydraulicStructuresDatasetResources(ManageResources, FileCollectionsControllerMixin):
+class ManageHydraulicStructuresDamResources(ManageResources, FileCollectionsControllerMixin):
     """
     Controller for manage_resources page.
     """
@@ -21,13 +21,13 @@ class ManageHydraulicStructuresDatasetResources(ManageResources, FileCollections
         """
         Get the URL for the Resource Launch button.
         """
-        return reverse('hydraulic_structures:dataset_details_tab', args=[resource.id, 'summary'])
+        return reverse('hydraulic_structures:dam_details_tab', args=[resource.id, 'summary'])
 
     def get_error_url(self, request, resource):
         """
         Get the URL for the Resource Launch button.
         """
-        return reverse('hydraulic_structures:dataset_details_tab', args=[resource.id, 'summary'])
+        return reverse('hydraulic_structures:dam_details_tab', args=[resource.id, 'summary'])
 
     def perform_custom_delete_operations(self, session, request, resource):
         """

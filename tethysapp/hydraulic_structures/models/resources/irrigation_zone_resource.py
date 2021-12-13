@@ -39,19 +39,19 @@ class HydraulicStructuresIrrigationZoneResource(SpatialResource, FileCollectionM
         uselist=True,
         sync_backref=False
     )
-    datasets = relationship(
-        'HydraulicStructuresDatasetResource',
+    dams = relationship(
+        'HydraulicStructuresDamResource',
         primaryjoin='or_('
                     'func.ST_Contains(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresDatasetResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresDamResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_CoveredBy(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresDatasetResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresDamResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_Overlaps(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresDatasetResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresDamResource.extent)).as_comparison(1, 2)'
                     ')',
-        backref=backref('dataset_irrigation_zones', uselist=True),
+        backref=backref('dam_irrigation_zones', uselist=True),
         viewonly=True,
         uselist=True,
         sync_backref=False
