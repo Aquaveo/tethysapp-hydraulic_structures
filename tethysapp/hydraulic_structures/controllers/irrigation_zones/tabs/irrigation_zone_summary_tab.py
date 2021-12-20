@@ -34,10 +34,10 @@ class IrrigationZoneSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixi
 
         tab_content = [column1, column2]
 
-        # Generate summary of the models and dams associated with this irrigation zone
+        # Generate summary of the models and hydraulic_infrastructures associated with this irrigation zone
         md_summary = ('Related Resources', {
             'Workflows': len(resource.workflows),
-            'Dams': len(resource.dams),
+            'Hydraulic Infrastructures': len(resource.hydraulic_infrastructures),
         })
         column2.append(md_summary)
 

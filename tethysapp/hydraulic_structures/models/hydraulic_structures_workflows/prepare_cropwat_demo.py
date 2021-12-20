@@ -206,12 +206,12 @@ class PrepareCropWatWorkflow(ResourceWorkflow):
         workflow.steps.append(step3)
         step2.result = step3
 
-        review_results_1 = DamWorkflowResult(
+        review_results_1 = HydraulicInfrastructureWorkflowResult(
             name='CropWat Result',
             codename='cropwat_table',
             order=30,
             options={
-                'no_dam_message': 'No data to view...',
+                'no_hydraulic_infrastructure_message': 'No data to view...',
             },
         )
 
@@ -220,7 +220,7 @@ class PrepareCropWatWorkflow(ResourceWorkflow):
             codename='gross_demand',
             order=30,
             options={
-                'no_dam_message': 'No data to view...',
+                'no_hydraulic_infrastructure_message': 'No data to view...',
                 'renderer': 'plotly',
                 'plot_type': 'lines',
                 'line_shape': 'spline',

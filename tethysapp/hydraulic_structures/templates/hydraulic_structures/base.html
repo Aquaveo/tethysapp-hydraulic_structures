@@ -14,8 +14,8 @@
 {% block app_navigation_items %}
   {% url 'hydraulic_structures:home' as home_url %}
   {% url 'hydraulic_structures:irrigation_zones_manage_resources' as manage_resource_url %}
-  {% url 'hydraulic_structures:dams_manage_resources' as manage_dams_resource_url %}
-  {% url 'hydraulic_structures:canals_manage_resources' as manage_canals_resource_url %}
+  {% url 'hydraulic_structures:hydraulic_infrastructures_manage_resources' as manage_hydraulic_infrastructures_resource_url %}
+  {% url 'hydraulic_structures:health_infrastructures_manage_resources' as manage_health_infrastructures_resource_url %}
   {% url 'hydraulic_structures:app_users_manage_users' as manage_users_url %}
   {% url 'hydraulic_structures:app_users_manage_organizations' as manage_organizations_url %}
   {% url 'hydraulic_structures:app_users_user_account' as user_account_url %}
@@ -23,8 +23,8 @@
   <li {% if request.path == home_url %}class="active"{% endif %}><a href="{{ home_url }}">Map</a></li>
   {% if show_resources_link %}
     <li {% if request.path == manage_resource_url %}class="active"{% endif %}><a href="{{ manage_resource_url }}">Irrigation Zones</a></li>
-    <li {% if request.path == manage_dams_resource_url %}class="active"{% endif %}><a href="{{ manage_dams_resource_url }}">Dams</a></li>
-    <li {% if request.path == manage_canals_resource_url %}class="active"{% endif %}><a href="{{ manage_canals_resource_url }}">Canals</a></li>
+    <li {% if request.path == manage_hydraulic_infrastructures_resource_url %}class="active"{% endif %}><a href="{{ manage_hydraulic_infrastructures_resource_url }}">Hydraulic Infrastructures</a></li>
+    <li {% if request.path == manage_health_infrastructures_resource_url %}class="active"{% endif %}><a href="{{ manage_health_infrastructures_resource_url }}">Health Infrastructures</a></li>
 {% endif %}
   {% if show_users_link %}
     <li {% if request.path == manage_users_url %}class="active"{% endif %}><a href="{{ manage_users_url }}">Users</a></li>

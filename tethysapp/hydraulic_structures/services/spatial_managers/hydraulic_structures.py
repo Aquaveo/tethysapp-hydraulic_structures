@@ -1,9 +1,9 @@
 from tethysext.atcore.services.resource_spatial_manager import ResourceSpatialManager
 
-from .base import DamSpatialManager, IrrigationZoneSpatialManager
+from .base import HydraulicInfrastructureSpatialManager, IrrigationZoneSpatialManager
 
-__all__ = ['HydraulicStructuresSpatialManager', 'HydraulicStructuresDamSpatialManager',
-           'HydraulicStructuresIrrigationZoneSpatialManager', 'HydraulicStructuresCanalSpatialManager']
+__all__ = ['HydraulicStructuresSpatialManager', 'HydraulicStructuresHydraulicInfrastructureSpatialManager',
+           'HydraulicStructuresIrrigationZoneSpatialManager', 'HydraulicStructuresHealthInfrastructureSpatialManager']
 
 
 class HydraulicStructuresSpatialManager(ResourceSpatialManager):
@@ -12,11 +12,11 @@ class HydraulicStructuresSpatialManager(ResourceSpatialManager):
     DATASTORE = 'hydraulic_structures_primary_db'
 
 
-class HydraulicStructuresDamSpatialManager(DamSpatialManager, HydraulicStructuresSpatialManager):
+class HydraulicStructuresHydraulicInfrastructureSpatialManager(HydraulicInfrastructureSpatialManager, HydraulicStructuresSpatialManager):
     pass
 
 
-class HydraulicStructuresCanalSpatialManager(DamSpatialManager, HydraulicStructuresSpatialManager):
+class HydraulicStructuresHealthInfrastructureSpatialManager(HydraulicInfrastructureSpatialManager, HydraulicStructuresSpatialManager):
     pass
 
 

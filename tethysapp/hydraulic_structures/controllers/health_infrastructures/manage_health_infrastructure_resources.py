@@ -11,7 +11,7 @@ from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ManageHydraulicStructuresCanalResources(ManageResources, FileCollectionsControllerMixin):
+class ManageHydraulicStructuresHealthInfrastructureResources(ManageResources, FileCollectionsControllerMixin):
     """
     Controller for manage_resources page.
     """

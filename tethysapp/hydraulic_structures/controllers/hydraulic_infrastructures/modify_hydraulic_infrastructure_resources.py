@@ -6,21 +6,23 @@ import zipfile
 
 from tethys_sdk.compute import get_scheduler
 from tethys_sdk.workspaces import user_workspace
+from tethys_gizmos.gizmo_options import TextInput, SelectInput
+
 from tethysext.atcore.controllers.app_users import ModifyResource
 from tethysext.atcore.services.file_database import FileDatabaseClient
-from tethysapp.hydraulic_structures.services.upload import UploadDamWorkflow
+from tethysapp.hydraulic_structures.services.upload import UploadHydraulicInfrastructureWorkflow
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
 
-__all__ = ['ModifyHydraulicStructuresDamResource']
+__all__ = ['ModifyHydraulicStructuresHydraulicInfrastructureResource']
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ModifyHydraulicStructuresDamResource(ModifyResource):
+class ModifyHydraulicStructuresHydraulicInfrastructureResource(ModifyResource):
     """
-    Controller that handles the new and edit pages for HYDRAULICSTRUCTURES dam resources.
+    Controller that handles the new and edit pages for HYDRAULICSTRUCTURES hydraulic_infrastructure resources.
     """
     # Srid field options
     include_srid = True
@@ -33,10 +35,40 @@ class ModifyHydraulicStructuresDamResource(ModifyResource):
     file_upload_required = True
     file_upload_multiple = False
     file_upload_accept = ".zip"
-    file_upload_label = "Dam Files"
-    file_upload_help = "Upload an archive containing the dam files. Include a __extent__.geojson file  to set " \
-                       "the spatial extent for the dam."
+    file_upload_label = "Hydraulic Infrastructure Files"
+    file_upload_help = "Upload an archive containing the hydraulic infrastructure files. Include a __extent__.geojson file  to set " \
+                       "the spatial extent for the hydraulic infrastructure."
     file_upload_error = "Must provide file(s)."
+    template_name = 'hydraulic_structures/resources/modify_hydraulic_infrastructure_resource.html'
+
+    def get_context(self, context):
+        """
+        Hook to add to context.
+        Args:
+            context(dict): context for controller.
+        """
+
+        hydraulic_infrastructure_select_error = ""
+
+        context = super().get_context(context)
+
+        hydraulic_infrastructure_features = [('Dams and Reservoirs', 'dams_and_reservoirs'),
+                                             ('Irrigation Systems', 'irrigation_system'),
+                                             ('River Protection Walls', 'river_protection_walls')]
+
+        hydraulic_infrastructure_select = SelectInput(
+            display_text='Hydraulic Infrastructure Type',
+            name='assign-hydraulic-infrastructure-type',
+            multiple=False,
+            initial=hydraulic_infrastructure_features[0],
+            options=hydraulic_infrastructure_features,
+            error=hydraulic_infrastructure_select_error,
+        )
+
+        context['hydraulic_infrastructure_select'] = hydraulic_infrastructure_select
+
+        return context
+
 
     @user_workspace
     def handle_resource_finished_processing(self, session, request, request_app_user, resource, editing,
@@ -61,9 +93,9 @@ class ModifyHydraulicStructuresDamResource(ModifyResource):
             # Get file database id
             file_database_id = app.get_custom_setting('file_database_id')
 
-            # Create file collection and relationship with dam resource
+            # Create file collection and relationship with hydraulic_infrastructure resource
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
-            file_collection = file_database.new_collection(meta={'display_name': 'Dam Files'})
+            file_collection = file_database.new_collection(meta={'display_name': 'Hydraulic Infrastructure Files'})
             resource.file_collections.append(file_collection.instance)
 
             for item in os.listdir(file_dir):
@@ -99,10 +131,10 @@ class ModifyHydraulicStructuresDamResource(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
 
             # Create the condor job and submit
-            job = UploadDamWorkflow(
+            job = UploadHydraulicInfrastructureWorkflow(
                 app=app,
                 user=request.user,
-                workflow_name=f'upload_dam_{resource_id}',
+                workflow_name=f'upload_hydraulic_infrastructure_{resource_id}',
                 workspace_path=job_path,
                 resource_db_url=app.get_persistent_store_database(app.DATABASE_NAME, as_url=True),
                 resource=resource,

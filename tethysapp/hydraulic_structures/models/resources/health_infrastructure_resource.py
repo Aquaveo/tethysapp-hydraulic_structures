@@ -1,8 +1,8 @@
 """
 ********************************************************************************
-* Name: dam_resource.py
+* Name: health_infrastructure_resource.py
 * Author: glarsen
-* Created On: November 18, 2020
+* Created On: November 23, 2020
 * Copyright: (c) Aquaveo 2020
 ********************************************************************************
 """
@@ -13,14 +13,14 @@ from tethysext.atcore.models.file_database import FileCollection, resource_file_
 from tethysext.atcore.mixins.file_collection_mixin import FileCollectionMixin
 
 
-class HydraulicStructuresDamResource(SpatialResource, FileCollectionMixin):
+class HydraulicStructuresHealthInfrastructureResource(SpatialResource, FileCollectionMixin):
     # Resource Types
-    TYPE = 'hydraulic_structures_dam_resource'
-    DISPLAY_TYPE_SINGULAR = 'Dam'
-    DISPLAY_TYPE_PLURAL = 'Dams'
+    TYPE = 'hydraulic_structures_health_infrastructure_resource'
+    DISPLAY_TYPE_SINGULAR = 'Health Infrastructure'
+    DISPLAY_TYPE_PLURAL = 'Health Infrastructures'
 
     file_collections = relationship(FileCollection, secondary=resource_file_collection_association,
-                                    backref=backref('hydraulic_structures_dam', uselist=False))
+                                    backref=backref('hydraulic_structures_health_infrastructure', uselist=False))
 
     # Polymorphism
     __mapper_args__ = {

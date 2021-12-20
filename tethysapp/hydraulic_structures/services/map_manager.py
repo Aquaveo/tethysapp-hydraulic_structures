@@ -12,7 +12,7 @@ from django.contrib import messages
 from tethys_sdk.gizmos import MapView, MVView
 
 from tethysext.atcore.services.map_manager import MapManagerBase
-from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresCanalResource, HydraulicStructuresDamResource
+from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresHealthInfrastructureResource, HydraulicStructuresHydraulicInfrastructureResource
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
@@ -103,11 +103,11 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
                 base_extents = irrigation_zone_layer.legend_extent
 
-            # If no resource_id, compose map of all mission boundaries with canals and dams
+            # If no resource_id, compose map of all mission boundaries with health_infrastructures and hydraulic_infrastructures
             else:
                 irrigation_zone_layers = []
-                canal_layers = []
-                dam_layers = []
+                health_infrastructure_layers = []
+                hydraulic_infrastructure_layers = []
 
                 # Build irrigation zone layers
                 irrigation_zones = session.query(HydraulicStructuresIrrigationZoneResource) \
@@ -122,31 +122,31 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
                 map_layers.extend(irrigation_zone_layers)
 
-                # Build canal layers
-                canals = session.query(HydraulicStructuresCanalResource) \
-                    .filter(HydraulicStructuresCanalResource.extent is not None) \
+                # Build health_infrastructure layers
+                health_infrastructures = session.query(HydraulicStructuresHealthInfrastructureResource) \
+                    .filter(HydraulicStructuresHealthInfrastructureResource.extent is not None) \
                     .all()
-                for canal in canals:
-                    canal_layer = self.build_boundary_layer_for_resource(
-                        canal, layer_variable='canal_resource', selectable=False
+                for health_infrastructure in health_infrastructures:
+                    health_infrastructure_layer = self.build_boundary_layer_for_resource(
+                        health_infrastructure, layer_variable='health_infrastructure_resource', selectable=False
                     )
-                    if canal_layer is not None:
-                        canal_layers.append(canal_layer)
+                    if health_infrastructure_layer is not None:
+                        health_infrastructure_layers.append(health_infrastructure_layer)
 
-                map_layers.extend(canal_layers)
+                map_layers.extend(health_infrastructure_layers)
 
-                # Build dam layers
-                dams = session.query(HydraulicStructuresDamResource) \
-                    .filter(HydraulicStructuresDamResource.extent is not None) \
+                # Build hydraulic_infrastructure layers
+                hydraulic_infrastructures = session.query(HydraulicStructuresHydraulicInfrastructureResource) \
+                    .filter(HydraulicStructuresHydraulicInfrastructureResource.extent is not None) \
                     .all()
-                for dam in dams:
-                    dam_layer = self.build_boundary_layer_for_resource(
-                        dam, layer_variable='dam_resource', selectable=False
+                for hydraulic_infrastructure in hydraulic_infrastructures:
+                    hydraulic_infrastructure_layer = self.build_boundary_layer_for_resource(
+                        hydraulic_infrastructure, layer_variable='hydraulic_infrastructure_resource', selectable=False
                     )
-                    if dam_layer is not None:
-                        dam_layers.append(dam_layer)
+                    if hydraulic_infrastructure_layer is not None:
+                        hydraulic_infrastructure_layers.append(hydraulic_infrastructure_layer)
 
-                map_layers.extend(dam_layers)
+                map_layers.extend(hydraulic_infrastructure_layers)
 
                 # Make Layer Groups
                 layer_groups.extend([
@@ -158,16 +158,16 @@ class HydraulicStructuresMapManager(MapManagerBase):
                         visible=True,
                     ),
                     self.build_layer_group(
-                        id='canal_layers',
-                        display_name='Canals',
-                        layers=canal_layers,
+                        id='health_infrastructure_layers',
+                        display_name='Health Infrastructures',
+                        layers=health_infrastructure_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),
                     self.build_layer_group(
-                        id='dam_layers',
-                        display_name='Dams',
-                        layers=dam_layers,
+                        id='hydraulic_infrastructure_layers',
+                        display_name='Hydraulic Infrastructures',
+                        layers=hydraulic_infrastructure_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),

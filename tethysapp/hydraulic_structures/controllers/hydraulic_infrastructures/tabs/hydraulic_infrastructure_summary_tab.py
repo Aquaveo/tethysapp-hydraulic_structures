@@ -1,6 +1,6 @@
 """
 ********************************************************************************
-* Name: model_summary_tab.py
+* Name: hydraulic_infrastructure_summary_tab.py
 * Author: msouffront, htran
 * Created On: December 23, 2020
 * Copyright: (c) Aquaveo 2020
@@ -9,12 +9,12 @@
 from tethysext.atcore.controllers.resources import ResourceSummaryTab
 from tethysext.atcore.mixins.file_collection_controller_mixin import FileCollectionsControllerMixin
 
-from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresCanalSpatialManager
+from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresHydraulicInfrastructureSpatialManager
 
 from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
 
-class CanalSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
+class HydraulicInfrastructureSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
     has_preview_image = True
     preview_image_title = "Extent"
 
@@ -22,7 +22,7 @@ class CanalSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
         return HydraulicStructuresMapManager
 
     def get_spatial_manager(self):
-        return HydraulicStructuresCanalSpatialManager
+        return HydraulicStructuresHydraulicInfrastructureSpatialManager
 
     def get_summary_tab_info(self, request, session, resource, *args, **kwargs):
         """

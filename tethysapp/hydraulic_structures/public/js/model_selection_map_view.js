@@ -99,7 +99,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
                     stroke: new ol.style.Stroke({color: 'red', width: 1}),
                     fill: new ol.style.Fill({color: 'rgba(255,0,0,0.1)'}),
                 }));
-            } else if (layer.tethys_data.layer_variable === 'dam_resource') {
+            } else if (layer.tethys_data.layer_variable === 'hydraulic_infrastructure_resource') {
                 // Set style for model_resources
                 layer.setStyle(new ol.style.Style({
                     stroke: new ol.style.Stroke({color: 'green', width: 1}),

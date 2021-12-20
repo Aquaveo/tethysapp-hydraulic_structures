@@ -22,36 +22,36 @@ class HydraulicStructuresIrrigationZoneResource(SpatialResource, FileCollectionM
     file_collections = relationship(FileCollection, secondary=resource_file_collection_association,
                                     backref=backref('irrigation_zone', uselist=False))
 
-    canals = relationship(
-        'HydraulicStructuresCanalResource',
+    health_infrastructures = relationship(
+        'HydraulicStructuresHealthInfrastructureResource',
         primaryjoin='or_('
                     'func.ST_Contains(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresCanalResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresHealthInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_CoveredBy(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresCanalResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresHealthInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_Overlaps(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresCanalResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresHealthInfrastructureResource.extent)).as_comparison(1, 2)'
                     ')',
-        backref=backref('canal_irrigation_zones', uselist=True),
+        backref=backref('health_infrastructure_irrigation_zones', uselist=True),
         viewonly=True,
         uselist=True,
         sync_backref=False
     )
-    dams = relationship(
-        'HydraulicStructuresDamResource',
+    hydraulic_infrastructures = relationship(
+        'HydraulicStructuresHydraulicInfrastructureResource',
         primaryjoin='or_('
                     'func.ST_Contains(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresDamResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresHydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_CoveredBy(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresDamResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresHydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_Overlaps(foreign(HydraulicStructuresIrrigationZoneResource.extent), '
-                    'remote(HydraulicStructuresDamResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicStructuresHydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
                     ')',
-        backref=backref('dam_irrigation_zones', uselist=True),
+        backref=backref('hydraulic_infrastructure_irrigation_zones', uselist=True),
         viewonly=True,
         uselist=True,
         sync_backref=False
