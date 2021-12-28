@@ -53,7 +53,15 @@ class ModifyHydraulicStructuresHydraulicInfrastructureResource(ModifyResource):
         context = super().get_context(context)
 
         hydraulic_infrastructure_features = [('Dams and Reservoirs', 'dams_and_reservoirs'),
-                                             ('Irrigation Systems', 'irrigation_system'),
+                                             ('Hydroelectric Dams', 'hydroelectric_dams'),
+                                             ('Irrigation Systems - Intake Works', 'is_intake_works'),
+                                             ('Irrigation Systems - Main Irrigation Channels',
+                                              'is_main_irrigation_channels'),
+                                             ('Irrigation Systems - Secondary and Lateral Irrigation Channels',
+                                              'is_secondary_and_lateral_irrigation_channels'),
+                                             ('Irrigation Systems - Drainage Channels', 'is_drainage_channels'),
+                                             ('Irrigation Systems - Storage Ponds', 'is_storage_ponds'),
+                                             ('Diversion Dams', 'diversion_dams'),
                                              ('River Protection Walls', 'river_protection_walls')]
 
         hydraulic_infrastructure_select = SelectInput(

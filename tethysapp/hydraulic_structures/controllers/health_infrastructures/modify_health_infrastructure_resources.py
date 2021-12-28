@@ -38,7 +38,7 @@ class ModifyHydraulicStructuresHealthInfrastructureResource(ModifyResource):
     file_upload_label = "Health Infrastructure Files"
     file_upload_help = "Upload Health Infrastructure Files"
     file_upload_error = "Must provide file(s)."
-    template_name = 'hydraulic_structures/resources/modify_model_resource.html'
+    template_name = 'hydraulic_structures/resources/modify_health_infrastructure_resource.html'
 
     def get_context(self, context):
         """
@@ -47,6 +47,31 @@ class ModifyHydraulicStructuresHealthInfrastructureResource(ModifyResource):
             context(dict): context for controller.
         """
         context = super().get_context(context)
+
+        health_infrastructure_select_error = ""
+
+        health_infrastructure_features = [('Aqueducts - Taking work', 'aqueducts_taking_work'),
+                                          ('Aqueducts - Well', 'aqueduct_well'),
+                                          ('Aqueducts - Impulse Line', 'aqueduct_impulse_line'),
+                                          ('Aqueducts - Storage Tank', 'aqueduct_storage_tank'),
+                                          ('Aqueducts - Driving Line', 'aqueduct_driving_line'),
+                                          ('Aqueducts - Distribution Network', 'aqueduct_distribution_network'),
+                                          ('Water Treatment Plants', 'water_treatment_plants'),
+                                          ('Sewage Treatment Plants', 'sewage_treatment_plants'),
+                                          ('Sanitary Sewers', 'sanitary_sewers'),
+                                          ('Storm Sewers', 'storm_sewers')
+                                          ]
+
+        health_infrastructure_select = SelectInput(
+            display_text='Health Infrastructure Type',
+            name='assign-heath-infrastructure-type',
+            multiple=False,
+            initial=health_infrastructure_features[0],
+            options=health_infrastructure_features,
+            error=health_infrastructure_select_error,
+        )
+
+        context['health_infrastructure_select'] = health_infrastructure_select
 
         return context
 
