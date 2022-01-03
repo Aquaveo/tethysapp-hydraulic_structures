@@ -15,7 +15,7 @@ log = logging.getLogger(f'tethys.{__name__}')
 class HydraulicStructuresModelMapView(MapView):
 
     http_method_names = ['get', 'post']
-    template_name = 'hydraulic_structures/map_view/irrigation_zone_selection_map_view.html'
+    template_name = 'hydraulic_structures/map_view/project_area_selection_map_view.html'
 
     def get_model_db(self, request, resource, *args, **kwargs):
         """
@@ -92,7 +92,7 @@ class HydraulicStructuresModelMapView(MapView):
             pass
         # if no resource_id, template and map title are changed for model_selection_map_view
         else:
-            self.template_name = 'hydraulic_structures/map_view/irrigation_zone_selection_map_view.html'
+            self.template_name = 'hydraulic_structures/map_view/project_area_selection_map_view.html'
             context['nav_title'] = 'Water Demand for Irrigation Map'
             context['show_custom_layer'] = False
             context['show_helpers'] = False

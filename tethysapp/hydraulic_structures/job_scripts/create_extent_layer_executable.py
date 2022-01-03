@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from tethys_dataset_services.engines.geoserver_engine import GeoServerSpatialDatasetEngine
 from tethysext.atcore.models.app_users import SpatialResource
 # DO NOT REMOVE THIS LINE - EACH MODEL CLASS NEEDS TO BE IMPORTED SO SQLALCHEMY CAN FIND IT
-from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresDamResource, HydraulicStructuresCanalResource  # noqa:F401
+from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresProjectAreaResource, HydraulicStructuresHydraulicInfrastructureResource, HydraulicStructuresHealthInfrastructureResource  # noqa:F401
 # DO NOT REMOVE THIS LINE - EACH MODEL CLASS NEEDS TO BE IMPORTED SO SQLALCHEMY CAN FIND IT
 
 

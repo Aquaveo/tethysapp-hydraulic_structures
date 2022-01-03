@@ -87,7 +87,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
 
     set_layer_styles = function() {
         for (const [layer_id, layer] of Object.entries(m_layers)) {
-            if (layer.tethys_data.layer_variable === 'irrigation_zone') {
+            if (layer.tethys_data.layer_variable === 'project_area') {
                 // Set style for irrigation zones
                 layer.setStyle(new ol.style.Style({
                     stroke: new ol.style.Stroke({color: 'blue', width: 2}),
@@ -99,7 +99,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
                     stroke: new ol.style.Stroke({color: 'red', width: 1}),
                     fill: new ol.style.Fill({color: 'rgba(255,0,0,0.1)'}),
                 }));
-            } else if (layer.tethys_data.layer_variable === 'dam_resource') {
+            } else if (layer.tethys_data.layer_variable === 'hydraulic_infrastructure_resource') {
                 // Set style for model_resources
                 layer.setStyle(new ol.style.Style({
                     stroke: new ol.style.Stroke({color: 'green', width: 1}),
@@ -129,7 +129,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
                     'data-feature-id="' + fid +'"' +
                     'data-layer-id="' + layer_name + '"' +
                     'id="map-view-plot-button"' +
-                '>Load Irrigation Zone</a>' +
+                '>Load Project Area</a>' +
             '</div>';
 
         return action_button;

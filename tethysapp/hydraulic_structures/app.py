@@ -95,21 +95,21 @@ class HydraulicStructures(TethysAppBase):
         from tethysext.atcore.urls import app_users, spatial_reference, resource_workflows, resources
         from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import\
             HydraulicStructuresSpatialManager
-        from tethysapp.hydraulic_structures.models.resources.irrigation_zone_resource import\
-            HydraulicStructuresIrrigationZoneResource
-        from tethysapp.hydraulic_structures.models.resources.dam_resource import HydraulicStructuresDamResource
-        from tethysapp.hydraulic_structures.models.resources.canal_resource import HydraulicStructuresCanalResource
+        from tethysapp.hydraulic_structures.models.resources.project_area_resource import\
+            HydraulicStructuresProjectAreaResource
+        from tethysapp.hydraulic_structures.models.resources.hydraulic_infrastructure_resource import HydraulicStructuresHydraulicInfrastructureResource
+        from tethysapp.hydraulic_structures.models.resources.health_infrastructure_resource import HydraulicStructuresHealthInfrastructureResource
         from tethysapp.hydraulic_structures.models.app_users import HydraulicStructuresOrganization
         from tethysapp.hydraulic_structures.models.hydraulic_structures_workflows import HYDRAULICSTRUCTURES_WORKFLOWS
 
-        from tethysapp.hydraulic_structures.controllers.irrigation_zones import ModifyIrrigationZone,\
-            ManageIrrigationZones, IrrigationZoneDetails
+        from tethysapp.hydraulic_structures.controllers.project_areas import ModifyProjectArea,\
+            ManageProjectAreas, ProjectAreaDetails
         from tethysapp.hydraulic_structures.controllers.map_view.hydraulic_structures_model_map_view import\
             HydraulicStructuresModelMapView
-        from tethysapp.hydraulic_structures.controllers.dams import ManageHydraulicStructuresDamResources,\
-            ModifyHydraulicStructuresDamResource, HydraulicStructuresDamResourceDetails
-        from tethysapp.hydraulic_structures.controllers.canals import ManageHydraulicStructuresCanalResources,\
-            HydraulicStructuresCanalResourceDetails, ModifyHydraulicStructuresCanalResource
+        from tethysapp.hydraulic_structures.controllers.hydraulic_infrastructures import ManageHydraulicStructuresHydraulicInfrastructureResources,\
+            ModifyHydraulicStructuresHydraulicInfrastructureResource, HydraulicStructuresHydraulicInfrastructureResourceDetails
+        from tethysapp.hydraulic_structures.controllers.health_infrastructures import ManageHydraulicStructuresHealthInfrastructureResources,\
+            HydraulicStructuresHealthInfrastructureResourceDetails, ModifyHydraulicStructuresHealthInfrastructureResource
         from tethysapp.hydraulic_structures.controllers.workflows.hydraulic_structures_workflow_view import HydraulicStructuresWorkflowRouter
         from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
@@ -123,30 +123,30 @@ class HydraulicStructures(TethysAppBase):
             persistent_store_name='primary_db',
             base_template='hydraulic_structures/base.html',
             custom_models=(
-                HydraulicStructuresIrrigationZoneResource,
+                HydraulicStructuresProjectAreaResource,
                 HydraulicStructuresOrganization,
             ),
             custom_controllers=(
-                ManageIrrigationZones,
-                ModifyIrrigationZone,
+                ManageProjectAreas,
+                ModifyProjectArea,
             )
         )
         url_maps.extend(app_users_urls)
 
-        dam_resources_urls = resources.urls(
+        hydraulic_infrastructure_resources_urls = resources.urls(
             url_map_maker=UrlMap,
             app=self,
             persistent_store_name='primary_db',
             base_template='hydraulic_structures/base.html',
             custom_models=(
-                HydraulicStructuresDamResource,
+                HydraulicStructuresHydraulicInfrastructureResource,
             ),
             custom_controllers=(
-                ManageHydraulicStructuresDamResources,
-                ModifyHydraulicStructuresDamResource,
+                ManageHydraulicStructuresHydraulicInfrastructureResources,
+                ModifyHydraulicStructuresHydraulicInfrastructureResource,
             )
         )
-        url_maps.extend(dam_resources_urls)
+        url_maps.extend(hydraulic_infrastructure_resources_urls)
 
         model_resources_urls = resources.urls(
             url_map_maker=UrlMap,
@@ -154,11 +154,11 @@ class HydraulicStructures(TethysAppBase):
             persistent_store_name='primary_db',
             base_template='hydraulic_structures/base.html',
             custom_models=(
-                HydraulicStructuresCanalResource,
+                HydraulicStructuresHealthInfrastructureResource,
             ),
             custom_controllers=(
-                ManageHydraulicStructuresCanalResources,
-                ModifyHydraulicStructuresCanalResource,
+                ManageHydraulicStructuresHealthInfrastructureResources,
+                ModifyHydraulicStructuresHealthInfrastructureResource,
             )
         )
         url_maps.extend(model_resources_urls)
@@ -172,13 +172,13 @@ class HydraulicStructures(TethysAppBase):
 
         url_maps.extend((
             UrlMap(
-                name='irrigation_zone_details_tab',
+                name='project_area_details_tab',
                 url='hydraulic_structures/irrigation-zones/{resource_id}/details/{tab_slug}',
-                controller=IrrigationZoneDetails.as_controller(
+                controller=ProjectAreaDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',
                     _Organization=HydraulicStructuresOrganization,
-                    _Resource=HydraulicStructuresIrrigationZoneResource
+                    _Resource=HydraulicStructuresProjectAreaResource
                 ),
                 regex=['[0-9A-Za-z-_.]+', '[0-9A-Za-z-_.{}]+']
             ),
@@ -186,13 +186,13 @@ class HydraulicStructures(TethysAppBase):
 
         url_maps.extend((
             UrlMap(
-                name='dam_details_tab',
-                url='hydraulic_structures/dams/{resource_id}/details/{tab_slug}',
-                controller=HydraulicStructuresDamResourceDetails.as_controller(
+                name='hydraulic_infrastructure_details_tab',
+                url='hydraulic_structures/hydraulic_infrastructures/{resource_id}/details/{tab_slug}',
+                controller=HydraulicStructuresHydraulicInfrastructureResourceDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',
                     _Organization=HydraulicStructuresOrganization,
-                    _Resource=HydraulicStructuresDamResource
+                    _Resource=HydraulicStructuresHydraulicInfrastructureResource
                 ),
                 regex=['[0-9A-Za-z-_.]+', '[0-9A-Za-z-_.{}]+']
             ),
@@ -202,11 +202,11 @@ class HydraulicStructures(TethysAppBase):
             UrlMap(
                 name='model_details_tab',
                 url='hydraulic_structures/models/{resource_id}/details/{tab_slug}',
-                controller=HydraulicStructuresCanalResourceDetails.as_controller(
+                controller=HydraulicStructuresHealthInfrastructureResourceDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',
                     _Organization=HydraulicStructuresOrganization,
-                    _Resource=HydraulicStructuresCanalResource,
+                    _Resource=HydraulicStructuresHealthInfrastructureResource,
                 ),
                 regex=['[0-9A-Za-z-_.]+', '[0-9A-Za-z-_.{}]+']
             ),
@@ -218,7 +218,7 @@ class HydraulicStructures(TethysAppBase):
             persistent_store_name='primary_db',
             workflow_pairs=[(workflow, HydraulicStructuresWorkflowRouter) for _, workflow in HYDRAULICSTRUCTURES_WORKFLOWS.items()],
             custom_models=(
-                HydraulicStructuresIrrigationZoneResource,
+                HydraulicStructuresProjectAreaResource,
                 HydraulicStructuresOrganization
             ),
         ))
@@ -232,7 +232,7 @@ class HydraulicStructures(TethysAppBase):
                     _persistent_store_name=self.DATABASE_NAME,
                     geoserver_name=self.GEOSERVER_NAME,
                     _Organization=HydraulicStructuresOrganization,
-                    _Resource=HydraulicStructuresIrrigationZoneResource,
+                    _Resource=HydraulicStructuresProjectAreaResource,
                     _SpatialManager=HydraulicStructuresSpatialManager,
                     _MapManager=HydraulicStructuresMapManager,
                 ),

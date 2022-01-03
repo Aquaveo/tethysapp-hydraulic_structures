@@ -26,7 +26,7 @@ class HydraulicStructuresWorkflowRouter(ResourceWorkflowRouter):
             str: back url
         """
         return reverse(
-            'hydraulic_structures:irrigation_zone_details_tab',
+            'hydraulic_structures:project_area_details_tab',
             kwargs={
                'resource_id': resource_id,
                'tab_slug': 'workflows'

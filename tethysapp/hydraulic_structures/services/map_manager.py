@@ -12,7 +12,7 @@ from django.contrib import messages
 from tethys_sdk.gizmos import MapView, MVView
 
 from tethysext.atcore.services.map_manager import MapManagerBase
-from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresIrrigationZoneResource, HydraulicStructuresCanalResource, HydraulicStructuresDamResource
+from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresProjectAreaResource, HydraulicStructuresHealthInfrastructureResource, HydraulicStructuresHydraulicInfrastructureResource
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
@@ -85,89 +85,89 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
             # If resource_id is given, compose map creates a ste mission model view for specific model
             if resource_id:
-                irrigation_zone = session.query(HydraulicStructuresIrrigationZoneResource).get(resource_id)
-                irrigation_zone_layer = self.build_boundary_layer_for_resource(
-                    irrigation_zone, layer_variable='irrigation_zone'
+                project_area = session.query(HydraulicStructuresProjectAreaResource).get(resource_id)
+                project_area_layer = self.build_boundary_layer_for_resource(
+                    project_area, layer_variable='project_area'
                 )
-                map_layers.append(irrigation_zone_layer)
+                map_layers.append(project_area_layer)
 
                 layer_groups.append(
                     self.build_layer_group(
-                        id='irrigation_zone_layers',
-                        display_name='Irrigation Zone',
-                        layers=[irrigation_zone_layer],
+                        id='project_area_layers',
+                        display_name='Project Area',
+                        layers=[project_area_layer],
                         layer_control='checkbox',
                         visible=True,
                     )
                 )
 
-                base_extents = irrigation_zone_layer.legend_extent
+                base_extents = project_area_layer.legend_extent
 
-            # If no resource_id, compose map of all mission boundaries with canals and dams
+            # If no resource_id, compose map of all mission boundaries with health_infrastructures and hydraulic_infrastructures
             else:
-                irrigation_zone_layers = []
-                canal_layers = []
-                dam_layers = []
+                project_area_layers = []
+                health_infrastructure_layers = []
+                hydraulic_infrastructure_layers = []
 
                 # Build irrigation zone layers
-                irrigation_zones = session.query(HydraulicStructuresIrrigationZoneResource) \
-                    .filter(HydraulicStructuresIrrigationZoneResource.extent is not None) \
+                project_areas = session.query(HydraulicStructuresProjectAreaResource) \
+                    .filter(HydraulicStructuresProjectAreaResource.extent is not None) \
                     .all()
-                for irrigation_zone in irrigation_zones:
-                    irrigation_zone_layer = self.build_boundary_layer_for_resource(
-                        irrigation_zone, layer_variable='irrigation_zone', selectable=True
+                for project_area in project_areas:
+                    project_area_layer = self.build_boundary_layer_for_resource(
+                        project_area, layer_variable='project_area', selectable=True
                     )
-                    if irrigation_zone_layer is not None:
-                        irrigation_zone_layers.append(irrigation_zone_layer)
+                    if project_area_layer is not None:
+                        project_area_layers.append(project_area_layer)
 
-                map_layers.extend(irrigation_zone_layers)
+                map_layers.extend(project_area_layers)
 
-                # Build canal layers
-                canals = session.query(HydraulicStructuresCanalResource) \
-                    .filter(HydraulicStructuresCanalResource.extent is not None) \
+                # Build health_infrastructure layers
+                health_infrastructures = session.query(HydraulicStructuresHealthInfrastructureResource) \
+                    .filter(HydraulicStructuresHealthInfrastructureResource.extent is not None) \
                     .all()
-                for canal in canals:
-                    canal_layer = self.build_boundary_layer_for_resource(
-                        canal, layer_variable='canal_resource', selectable=False
+                for health_infrastructure in health_infrastructures:
+                    health_infrastructure_layer = self.build_boundary_layer_for_resource(
+                        health_infrastructure, layer_variable='health_infrastructure_resource', selectable=False
                     )
-                    if canal_layer is not None:
-                        canal_layers.append(canal_layer)
+                    if health_infrastructure_layer is not None:
+                        health_infrastructure_layers.append(health_infrastructure_layer)
 
-                map_layers.extend(canal_layers)
+                map_layers.extend(health_infrastructure_layers)
 
-                # Build dam layers
-                dams = session.query(HydraulicStructuresDamResource) \
-                    .filter(HydraulicStructuresDamResource.extent is not None) \
+                # Build hydraulic_infrastructure layers
+                hydraulic_infrastructures = session.query(HydraulicStructuresHydraulicInfrastructureResource) \
+                    .filter(HydraulicStructuresHydraulicInfrastructureResource.extent is not None) \
                     .all()
-                for dam in dams:
-                    dam_layer = self.build_boundary_layer_for_resource(
-                        dam, layer_variable='dam_resource', selectable=False
+                for hydraulic_infrastructure in hydraulic_infrastructures:
+                    hydraulic_infrastructure_layer = self.build_boundary_layer_for_resource(
+                        hydraulic_infrastructure, layer_variable='hydraulic_infrastructure_resource', selectable=False
                     )
-                    if dam_layer is not None:
-                        dam_layers.append(dam_layer)
+                    if hydraulic_infrastructure_layer is not None:
+                        hydraulic_infrastructure_layers.append(hydraulic_infrastructure_layer)
 
-                map_layers.extend(dam_layers)
+                map_layers.extend(hydraulic_infrastructure_layers)
 
                 # Make Layer Groups
                 layer_groups.extend([
                     self.build_layer_group(
-                        id='irrigation_zone_layers',
-                        display_name='Irrigation Zones',
-                        layers=irrigation_zone_layers,
+                        id='project_area_layers',
+                        display_name='Project Areas',
+                        layers=project_area_layers,
                         layer_control='checkbox',
                         visible=True,
                     ),
                     self.build_layer_group(
-                        id='canal_layers',
-                        display_name='Canals',
-                        layers=canal_layers,
+                        id='health_infrastructure_layers',
+                        display_name='Health Infrastructures',
+                        layers=health_infrastructure_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),
                     self.build_layer_group(
-                        id='dam_layers',
-                        display_name='Dams',
-                        layers=dam_layers,
+                        id='hydraulic_infrastructure_layers',
+                        display_name='Hydraulic Infrastructures',
+                        layers=hydraulic_infrastructure_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),
@@ -190,7 +190,7 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
         Args:
             resource (SpatialResource): the Resource.
-            layer_variable (str): the type/class of the layer (e.g.: irrigation_zone).
+            layer_variable (str): the type/class of the layer (e.g.: project_area).
             selectable (bool): Make feature selectable with "Load" pop-up when True.
 
         Returns:
