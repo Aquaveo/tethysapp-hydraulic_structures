@@ -16,7 +16,7 @@ from tethysext.atcore.models.resource_workflow_steps import FormInputRWS, Spatia
 from tethysext.atcore.models.resource_workflow_results import SpatialWorkflowResult, DatasetWorkflowResult, \
     PlotWorkflowResult, ReportWorkflowResult
 
-from tethysapp.hydraulic_structures.models.resources.irrigation_zone_resource import HydraulicStructuresIrrigationZoneResource
+from tethysapp.hydraulic_structures.models.resources.project_area_resource import HydraulicStructuresProjectAreaResource
 
 
 class SelectCropWatModelParam(param.Parameterized):
@@ -56,7 +56,7 @@ class SelectCropWatModelParam(param.Parameterized):
                 resource_id = kwargs['request'].url_route['kwargs']['resource_id']
                 workflow_id = kwargs['request'].url_route['kwargs']['workflow_id']
             session = kwargs['session']
-            resource = session.query(HydraulicStructuresIrrigationZoneResource).get(resource_id)
+            resource = session.query(HydraulicStructuresProjectAreaResource).get(resource_id)
             workflow = session.query(ResourceWorkflow).get(workflow_id)
             select_existing_cropwat_models = dict()
             model_name_duplicate_count = 0

@@ -8,4 +8,4 @@
 """
 from tethysapp.hydraulic_structures.models.resources.hydraulic_infrastructure_resource import *  # noqa: F401, F403
 from tethysapp.hydraulic_structures.models.resources.health_infrastructure_resource import *  # noqa: F401, F403
-from tethysapp.hydraulic_structures.models.resources.irrigation_zone_resource import *  # noqa: F401, F403
+from tethysapp.hydraulic_structures.models.resources.project_area_resource import *  # noqa: F401, F403

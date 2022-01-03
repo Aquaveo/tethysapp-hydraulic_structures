@@ -4,7 +4,7 @@
 {% block header_buttons %}
   {% if admin_user %}
     <div class="header-button">
-      <a href="{% url 'hydraulic_structures:irrigation_zones_manage_resources' %}" data-toggle="tooltip" data-placement="bottom" title="Admin">Admin</a>
+      <a href="{% url 'hydraulic_structures:project_areas_manage_resources' %}" data-toggle="tooltip" data-placement="bottom" title="Admin">Admin</a>
     </div>
   {% endif %}
   <div class="header-button glyphicon-button" data-toggle="tooltip" data-placement="bottom" title="Help">
@@ -30,7 +30,7 @@
           <h4 class="modal-title" id="help-modal-label">Quick Tip</h4>
         </div>
         <div class="modal-body">
-          <p>To begin, select a Irrigation Zone from the map and click <strong>Load Irrigation Zone</strong></p>
+          <p>To begin, select a Project Area from the map and click <strong>Load Project Area</strong></p>
         </div>
         <div class="modal-footer">
           <div class="div-left">

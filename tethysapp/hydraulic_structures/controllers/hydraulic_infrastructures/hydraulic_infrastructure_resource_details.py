@@ -1,5 +1,5 @@
 """
-* Name: irrigation_zone_details.py
+* Name: project_area_details.py
 * Author: msouffront, htran
 * Created On: December 23, 2020
 * Copyright: (c) Aquaveo 2020

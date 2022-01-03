@@ -5,7 +5,7 @@ from tethysext.atcore.services.file_database import FileDatabaseClient
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
 
-class IrrigationZoneFilesTab(ResourceFilesTab):
+class ProjectAreaFilesTab(ResourceFilesTab):
     def get_file_collections(self, request, resource, session, *args, **kwargs):
         """
         Get the file_collections

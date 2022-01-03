@@ -1,6 +1,6 @@
 """
 ********************************************************************************
-* Name: manage_irrigation_zones.py
+* Name: manage_project_areas.py
 * Author: gagelarsen
 * Created On: December 01, 2020
 * Copyright: (c) Aquaveo 2020
@@ -20,7 +20,7 @@ from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ManageIrrigationZones(ManageResources, FileCollectionsControllerMixin):
+class ManageProjectAreas(ManageResources, FileCollectionsControllerMixin):
     """
     Controller for manage_resources page.
     """
@@ -30,13 +30,13 @@ class ManageIrrigationZones(ManageResources, FileCollectionsControllerMixin):
         """
         Get the URL for the Resource Launch button.
         """
-        return reverse('hydraulic_structures:irrigation_zone_details_tab', args=[resource.id, 'summary'])
+        return reverse('hydraulic_structures:project_area_details_tab', args=[resource.id, 'summary'])
 
     def get_error_url(self, request, resource):
         """
         Get the URL for the Resource Launch button.
         """
-        return reverse('hydraulic_structures:irrigation_zone_details_tab', args=[resource.id, 'summary'])
+        return reverse('hydraulic_structures:project_area_details_tab', args=[resource.id, 'summary'])
 
     def perform_custom_delete_operations(self, session, request, resource):
         """

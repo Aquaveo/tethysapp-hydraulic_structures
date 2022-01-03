@@ -1,6 +1,6 @@
 """
 ********************************************************************************
-* Name: irrigation_zone_workflows_tab.py
+* Name: project_area_workflows_tab.py
 * Author: gagelarsen
 * Created On: December 02, 2020
 * Copyright: (c) Aquaveo 2020
@@ -13,7 +13,7 @@ from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structur
 from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
 
-class IrrigationZoneWorkflowsTab(ResourceWorkflowsTab):
+class ProjectAreaWorkflowsTab(ResourceWorkflowsTab):
 
     @classmethod
     def get_workflow_types(cls):

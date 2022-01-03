@@ -1,6 +1,6 @@
 """
 ********************************************************************************
-* Name: modify_irrigation_zone.py
+* Name: modify_project_area.py
 * Author: gagelarsen
 * Created On: December 01, 2020
 * Copyright: (c) Aquaveo 2020
@@ -15,18 +15,18 @@ from tethys_sdk.compute import get_scheduler
 from tethys_sdk.workspaces import user_workspace
 from tethysext.atcore.services.file_database import FileDatabaseClient
 from tethysext.atcore.controllers.app_users import ModifyResource
-from tethysapp.hydraulic_structures.services.upload import UploadIrrigationZoneWorkflow
+from tethysapp.hydraulic_structures.services.upload import UploadProjectAreaWorkflow
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
-__all__ = ['ModifyIrrigationZone']
+__all__ = ['ModifyProjectArea']
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ModifyIrrigationZone(ModifyResource):
+class ModifyProjectArea(ModifyResource):
     """
-    Controller that handles the new and edit pages for Irrigation Zone resources.
+    Controller that handles the new and edit pages for Project Area resources.
     """
     # Srid field options
     include_srid = True
@@ -39,7 +39,7 @@ class ModifyIrrigationZone(ModifyResource):
     file_upload_required = True
     file_upload_multiple = False
     file_upload_accept = ".zip"
-    file_upload_label = "Irrigation Zone Files"
+    file_upload_label = "Project Area Files"
     file_upload_help = "Upload an archive containing the irrigation zone files. Please include an __extent__.geojson " \
                        "file that contains a polygon defining the boundary of the irrigation zone."
     file_upload_error = "Must provide file(s)."
@@ -107,10 +107,10 @@ class ModifyIrrigationZone(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
 
             # Create the condor job and submit
-            job = UploadIrrigationZoneWorkflow(
+            job = UploadProjectAreaWorkflow(
                 app=app,
                 user=request.user,
-                workflow_name=f'upload_irrigation_zone_{resource_id}',
+                workflow_name=f'upload_project_area_{resource_id}',
                 workspace_path=job_path,
                 resource_db_url=app.get_persistent_store_database(app.DATABASE_NAME, as_url=True),
                 resource=resource,
@@ -122,7 +122,7 @@ class ModifyIrrigationZone(ModifyResource):
             )
 
             job.run_job()
-            log.info('IrrigationZone upload job submitted to HTCondor')
+            log.info('ProjectArea upload job submitted to HTCondor')
 
     def handle_srid_changed(self, session, request, request_app_user, resource, old_srid, new_srid):
         """

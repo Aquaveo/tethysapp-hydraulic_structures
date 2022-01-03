@@ -1,6 +1,6 @@
 """
 ********************************************************************************
-* Name: irrigation_zone_summary_tab.py
+* Name: project_area_summary_tab.py
 * Author: gagelarsen
 * Created On: December 02, 2020
 * Copyright: (c) Aquaveo 2020
@@ -9,12 +9,12 @@
 from tethysext.atcore.controllers.resources import ResourceSummaryTab
 from tethysext.atcore.mixins.file_collection_controller_mixin import FileCollectionsControllerMixin
 
-from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresIrrigationZoneSpatialManager
+from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresProjectAreaSpatialManager
 
 from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
 
-class IrrigationZoneSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
+class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
     has_preview_image = True
     preview_image_title = "Extent"
 
@@ -22,7 +22,7 @@ class IrrigationZoneSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixi
         return HydraulicStructuresMapManager
 
     def get_spatial_manager(self):
-        return HydraulicStructuresIrrigationZoneSpatialManager
+        return HydraulicStructuresProjectAreaSpatialManager
 
     def get_summary_tab_info(self, request, session, resource, *args, **kwargs):
         """
