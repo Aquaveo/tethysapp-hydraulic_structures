@@ -9,7 +9,7 @@
 from tethysext.atcore.controllers.resources import ResourceSummaryTab
 from tethysext.atcore.mixins.file_collection_controller_mixin import FileCollectionsControllerMixin
 
-from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresHydraulicInfrastructureSpatialManager
+from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicInfrastructureSpatialManager
 
 from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
@@ -22,7 +22,7 @@ class HydraulicInfrastructureSummaryTab(ResourceSummaryTab, FileCollectionsContr
         return HydraulicStructuresMapManager
 
     def get_spatial_manager(self):
-        return HydraulicStructuresHydraulicInfrastructureSpatialManager
+        return HydraulicInfrastructureSpatialManager
 
     def get_summary_tab_info(self, request, session, resource, *args, **kwargs):
         """

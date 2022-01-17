@@ -5,13 +5,13 @@
 * Copyright: (c) Aquaveo 2021
 ********************************************************************************
 """
-__all__ = ['HydraulicStructuresHealthInfrastructureResourceDetails']
+__all__ = ['HealthInfrastructureResourceDetails']
 
 from tethysext.atcore.controllers.resources import TabbedResourceDetails
 from tethysapp.hydraulic_structures.controllers.health_infrastructures.tabs import HealthInfrastructureFilesTab, HealthInfrastructureSummaryTab
 
 
-class HydraulicStructuresHealthInfrastructureResourceDetails(TabbedResourceDetails):
+class HealthInfrastructureResourceDetails(TabbedResourceDetails):
     """
     Controller for Model details page(s).
     """

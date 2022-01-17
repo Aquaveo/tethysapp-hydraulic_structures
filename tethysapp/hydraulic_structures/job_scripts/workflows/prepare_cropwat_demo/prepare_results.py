@@ -10,8 +10,8 @@ from tethysext.atcore.services.file_database import FileCollectionClient, FileDa
 
 
 # DO NOT REMOVE, need to import all the subclasses of ResourceWorkflowStep for the polymorphism to work.
-from tethysapp.hydraulic_structures.models.resources.health_infrastructure_resource import HydraulicStructuresHealthInfrastructureResource
-from tethysapp.hydraulic_structures.models.resources.hydraulic_infrastructure_resource import HydraulicStructuresHydraulicInfrastructureResource
+from tethysapp.hydraulic_structures.models.resources.health_infrastructure_resource import HealthInfrastructureResource
+from tethysapp.hydraulic_structures.models.resources.hydraulic_infrastructure_resource import HydraulicInfrastructureResource
 from tethysext.atcore.models.resource_workflow_results import *  # noqa: F401, F403
 from tethysext.atcore.models.resource_workflow_steps import *  # noqa: F401, F403
 from tethysext.atcore.services.resource_workflows.decorators import workflow_step_job
@@ -58,7 +58,7 @@ def main(resource_db_session, model_db_session, resource, workflow, step, gs_pri
     existing_model_id = form_values['select_existing_cropwat_model']
 
     # Get base ModelResource from selected base model
-    existing_model = resource_db_session.query(HydraulicStructuresHealthInfrastructureResource).get(existing_model_id)
+    existing_model = resource_db_session.query(HealthInfrastructureResource).get(existing_model_id)
 
     file_database_id = workflow.get_attribute('file_database_id')
     root_directory = workflow.get_attribute('linux_fdb_root')
@@ -312,8 +312,8 @@ def main(resource_db_session, model_db_session, resource, workflow, step, gs_pri
     map_result = step.result.get_result_by_codename('map_demand')
     map_result.reset()
 
-    hydraulic_infrastructures = resource_db_session.query(HydraulicStructuresHydraulicInfrastructureResource).\
-        filter(HydraulicStructuresHydraulicInfrastructureResource.extent.ST_Intersects(existing_model.extent)).all()
+    hydraulic_infrastructures = resource_db_session.query(HydraulicInfrastructureResource).\
+        filter(HydraulicInfrastructureResource.extent.ST_Intersects(existing_model.extent)).all()
 
     for hydraulic_infrastructure in hydraulic_infrastructures:
         geojson_model_boundary, extents = generate_geojson_setting(hydraulic_infrastructure)

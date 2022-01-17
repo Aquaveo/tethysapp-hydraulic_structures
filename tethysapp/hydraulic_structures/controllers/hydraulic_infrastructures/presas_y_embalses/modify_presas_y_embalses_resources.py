@@ -1,32 +1,28 @@
-"""
-********************************************************************************
-* Name: modify_project_area.py
-* Author: gagelarsen
-* Created On: December 01, 2020
-* Copyright: (c) Aquaveo 2020
-********************************************************************************
-"""
 import logging
 import os
 import json
+import shutil
 import zipfile
 
 from tethys_sdk.compute import get_scheduler
 from tethys_sdk.workspaces import user_workspace
-from tethysext.atcore.services.file_database import FileDatabaseClient
+from tethys_gizmos.gizmo_options import TextInput, SelectInput
+
 from tethysext.atcore.controllers.app_users import ModifyResource
-from tethysapp.hydraulic_structures.services.upload import UploadProjectAreaWorkflow
+from tethysext.atcore.services.file_database import FileDatabaseClient
+from tethysapp.hydraulic_structures.services.upload import UploadHydraulicInfrastructureWorkflow
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
-__all__ = ['ModifyProjectArea']
+
+__all__ = ['ModifyHydraulicInfrastructureResource']
 log = logging.getLogger(f'tethys.{__name__}')
 
 
-class ModifyProjectArea(ModifyResource):
+class ModifyHydraulicInfrastructureResource(ModifyResource):
     """
-    Controller that handles the new and edit pages for Project Area resources.
+    Controller that handles the new and edit pages for HYDRAULICSTRUCTURES hydraulic_infrastructure resources.
     """
     # Srid field options
     include_srid = True
@@ -39,10 +35,48 @@ class ModifyProjectArea(ModifyResource):
     file_upload_required = True
     file_upload_multiple = False
     file_upload_accept = ".zip"
-    file_upload_label = "Project Area Files"
-    file_upload_help = "Upload an archive containing the irrigation zone files. Please include an __extent__.geojson " \
-                       "file that contains a polygon defining the boundary of the irrigation zone."
+    file_upload_label = "Hydraulic Infrastructure Files"
+    file_upload_help = "Upload an archive containing the hydraulic infrastructure files. Include a __extent__.geojson file  to set " \
+                       "the spatial extent for the hydraulic infrastructure."
     file_upload_error = "Must provide file(s)."
+    template_name = 'hydraulic_structures/resources/modify_hydraulic_infrastructure_resource.html'
+
+    def get_context(self, context):
+        """
+        Hook to add to context.
+        Args:
+            context(dict): context for controller.
+        """
+
+        hydraulic_infrastructure_select_error = ""
+
+        context = super().get_context(context)
+
+        hydraulic_infrastructure_features = [('Dams and Reservoirs', 'dams_and_reservoirs'),
+                                             ('Hydroelectric Dams', 'hydroelectric_dams'),
+                                             ('Irrigation Systems - Intake Works', 'is_intake_works'),
+                                             ('Irrigation Systems - Main Irrigation Channels',
+                                              'is_main_irrigation_channels'),
+                                             ('Irrigation Systems - Secondary and Lateral Irrigation Channels',
+                                              'is_secondary_and_lateral_irrigation_channels'),
+                                             ('Irrigation Systems - Drainage Channels', 'is_drainage_channels'),
+                                             ('Irrigation Systems - Storage Ponds', 'is_storage_ponds'),
+                                             ('Diversion Dams', 'diversion_dams'),
+                                             ('River Protection Walls', 'river_protection_walls')]
+
+        hydraulic_infrastructure_select = SelectInput(
+            display_text='Hydraulic Infrastructure Type',
+            name='assign-hydraulic-infrastructure-type',
+            multiple=False,
+            initial=hydraulic_infrastructure_features[0],
+            options=hydraulic_infrastructure_features,
+            error=hydraulic_infrastructure_select_error,
+        )
+
+        context['hydraulic_infrastructure_select'] = hydraulic_infrastructure_select
+
+        return context
+
 
     @user_workspace
     def handle_resource_finished_processing(self, session, request, request_app_user, resource, editing,
@@ -52,15 +86,11 @@ class ModifyProjectArea(ModifyResource):
         Args:
             session(sqlalchemy.session): open sqlalchemy session.
             request(django.request): the Django request.
-            request_app_user(AppUser): app user that is making the request.
             resource(Resource): The resource being edited or newly created.
             editing(bool): True if editing, False if creating a new resource.
-            user_workspace(TethysWorkspace): Workspace for the request user provided by the user_workspace decorator.
         """
-        # Only do the following if creating a new irrigation zone
+        # Only do the following if creating a new project
         if not editing:
-            # TODO: The logic to unzip the file, set extent from __extent__.geojson, and save in file collection
-            # TODO: is copied from ModifyHydraulicInfrastructureResource. Refactor to use generalized function in future.
             files = resource.get_attribute('files')
             file_dir = os.path.dirname(files[0])
             with zipfile.ZipFile(files[0], "r") as zip_ref:
@@ -71,24 +101,26 @@ class ModifyProjectArea(ModifyResource):
             # Get file database id
             file_database_id = app.get_custom_setting('file_database_id')
 
-            # Store file in FileCollection
+            # Create file collection and relationship with hydraulic_infrastructure resource
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
-            file_collection = file_database.new_collection(meta={'display_name': 'Supporting Files'})
+            file_collection = file_database.new_collection(meta={'display_name': 'Hydraulic Infrastructure Files'})
+            resource.file_collections.append(file_collection.instance)
 
-            for filename in os.listdir(file_dir):
-                if filename == '__extent__.geojson':
-                    with open(os.path.join(file_dir, filename), 'r') as geojson_file:
+            for item in os.listdir(file_dir):
+                # Store file in FileCollection
+                file_collection.add_item(os.path.join(file_dir, item))
+
+                if item == '__extent__.geojson':
+                    with open(os.path.join(file_dir, item), 'r') as geojson_file:
                         geojson_data = json.load(geojson_file)
                         # Use the first feature as extent.
                         extent_dict = geojson_data['features'][0]['geometry']
                         srid = resource.get_attribute('srid')
                         resource.set_extent(obj=extent_dict, object_format='dict', srid=srid)
 
-                # Add all files and dirs to the file collection
-                file_collection.add_item(os.path.join(file_dir, filename))
-
-            # Associate file_collection with resource
-            resource.file_collections.append(file_collection.instance)
+            # Remove orginal upload directory data.
+            shutil.rmtree(file_dir)
+            resource.set_attribute('files', '')
 
             # Save new project
             session.commit()
@@ -107,10 +139,10 @@ class ModifyProjectArea(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
 
             # Create the condor job and submit
-            job = UploadProjectAreaWorkflow(
+            job = UploadHydraulicInfrastructureWorkflow(
                 app=app,
                 user=request.user,
-                workflow_name=f'upload_project_area_{resource_id}',
+                workflow_name=f'upload_hydraulic_infrastructure_{resource_id}',
                 workspace_path=job_path,
                 resource_db_url=app.get_persistent_store_database(app.DATABASE_NAME, as_url=True),
                 resource=resource,
@@ -122,7 +154,7 @@ class ModifyProjectArea(ModifyResource):
             )
 
             job.run_job()
-            log.info('ProjectArea upload job submitted to HTCondor')
+            log.info('PROJECT UPLOAD job submitted to HTCondor')
 
     def handle_srid_changed(self, session, request, request_app_user, resource, old_srid, new_srid):
         """

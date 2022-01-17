@@ -4,9 +4,10 @@
 {% block app_content %}
   <div class="row">
     <div class="col-md-12">
-      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ type_singular }}</h1>
+      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ health_structure_type_spanish }}</h1>
       <form id="new-resource-form" method="post" action="" {% if show_file_upload_field %}enctype="multipart/form-data"{% endif %}>
         {% csrf_token %}
+        <input type="hidden" id="health_structure_type" name="health_structure_type" value="{{ health_structure_type_spanish }}">
         <div class="row">
           <div class="col-md-6">
             {# NAME FIELD #}
@@ -25,14 +26,79 @@
             {# ORGANIZATIONS FIELD #}
             {% gizmo organization_select %}
 
-            {# HEALTH_INFRASTRUCTURE FIELD #}
-            {% gizmo health_infrastructure_select %}
-
             {# SPATIAL REFERENCE FIELD #}
             {% if show_srid_field %}
               {% gizmo spatial_reference_select %}
             {% endif %}
             {{ resource_srid_error }}
+            {# DAMS AND RESERVOIRS SECTION #}
+            {% if show_hydraulic_dam %}
+
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if hydraulic_dam_purposes %}
+                {% gizmo hydraulic_dam_purposes %}
+                {% endif %}
+
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if hydraulic_dam_year %}
+                {% gizmo hydraulic_dam_year %}
+                {% endif %}
+                
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if hydraulic_dam_height %}
+                {% gizmo hydraulic_dam_height %}
+                {% endif %}
+                
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if hydraulic_dam_volume %}
+                {% gizmo hydraulic_dam_volume %}
+                {% endif %}            
+            {% endif %}
+
+            {# Well#}
+            {% if show_well %}
+              {% gizmo well_year %}
+            {% endif %}
+
+            {# pipe_line #}
+            {% if show_pipe_line %}
+              {% gizmo pipe_line_year %}
+            {% endif %}
+
+            {# main storage_tank #}
+            {% if show_storage_tank %}
+              {% gizmo storage_tank_year %}
+            {% endif %}
+
+            {# gravity pipe line #}
+            {% if show_gravity_pipe_line %}
+              {% gizmo gravity_pipe_line_year %}
+            {% endif %}
+            
+            {# Distribution Network #}
+            {% if show_distribution_network %}
+              {% gizmo distribution_network_year %}
+            {% endif %}
+            
+            {# Water Treatment Plan #}
+            {% if show_water_treatment_plan %}
+              {% gizmo water_treatment_plan_year %}
+            {% endif %}
+            
+            {# Sewage Treatment Plan #}
+            {% if show_sewage_treatment_plan %}
+              {% gizmo sewage_treatment_plan_year %}
+            {% endif %}
+            
+            {# Sanitary Sewers #}
+            {% if show_sanitary_sewer %}
+              {% gizmo sanitary_sewer_year %}
+            {% endif %}
+
+            {# Storm Sewers #}
+            {% if show_storm_sewer %}
+              {% gizmo storm_sewer_year %}
+            {% endif %}
 
             {% block custom_app_content %}
             {% endblock %}

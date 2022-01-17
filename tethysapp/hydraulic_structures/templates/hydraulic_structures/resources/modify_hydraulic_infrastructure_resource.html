@@ -4,9 +4,10 @@
 {% block app_content %}
   <div class="row">
     <div class="col-md-12">
-      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ type_singular }}</h1>
+      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ hydraulic_structure_type_spanish }}</h1>
       <form id="new-resource-form" method="post" action="" {% if show_file_upload_field %}enctype="multipart/form-data"{% endif %}>
         {% csrf_token %}
+        <input type="hidden" id="hydraulic_structure_type" name="hydraulic_structure_type" value="{{ hydraulic_structure_type }}">
         <div class="row">
           <div class="col-md-6">
             {# NAME FIELD #}
@@ -25,14 +26,74 @@
             {# ORGANIZATIONS FIELD #}
             {% gizmo organization_select %}
 
-            {# HYDRAULIC_INFRASTRUCTURE FIELD #}
-            {% gizmo hydraulic_infrastructure_select %}
-
             {# SPATIAL REFERENCE FIELD #}
             {% if show_srid_field %}
               {% gizmo spatial_reference_select %}
             {% endif %}
             {{ resource_srid_error }}
+            {# DAMS AND RESERVOIRS SECTION #}
+            {% if show_dams_and_resevoirs %}
+
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if dams_and_resevoirs_purposes %}
+                {% gizmo dams_and_resevoirs_purposes %}
+                {% endif %}
+
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if dams_and_resevoirs_year %}
+                {% gizmo dams_and_resevoirs_year %}
+                {% endif %}
+                
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if dams_and_resevoirs_height %}
+                {% gizmo dams_and_resevoirs_height %}
+                {% endif %}
+                
+                {# DAMS AND RESERVOIRS PURPOSES #}
+                {% if dams_and_resevoirs_volume %}
+                {% gizmo dams_and_resevoirs_volume %}
+                {% endif %}            
+            {% endif %}
+
+            {# hydroelectric dam#}
+            {% if show_hydroelectric_dam %}
+              {% gizmo hydroelectric_dam_year %}
+            {% endif %}
+
+            {# intake #}
+            {% if show_intake %}
+              {% gizmo intake_year %}
+            {% endif %}
+
+            {# main irrigation channel #}
+            {% if show_main_irrigation_channel %}
+              {% gizmo main_irrigation_channel_year %}
+            {% endif %}
+
+            {# HYDROELECTRIC DAM #}
+            {% if show_secondary_and_lateral_irrigation_system %}
+              {% gizmo secondary_and_lateral_irrigation_system_year %}
+            {% endif %}
+            
+            {# HYDROELECTRIC DAM #}
+            {% if show_drainage_channel %}
+              {% gizmo drainage_channel_year %}
+            {% endif %}
+            
+            {# HYDROELECTRIC DAM #}
+            {% if show_intake_storage_pond %}
+              {% gizmo intake_storage_pond_year %}
+            {% endif %}
+            
+            {# HYDROELECTRIC DAM #}
+            {% if show_diversion_dam %}
+              {% gizmo diversion_dam_year %}
+            {% endif %}
+            
+            {# HYDROELECTRIC DAM #}
+            {% if show_river_protection_wall %}
+              {% gizmo river_protection_wall_year %}
+            {% endif %}
 
             {% block custom_app_content %}
             {% endblock %}

@@ -13,14 +13,14 @@ from tethysext.atcore.models.file_database import FileCollection, resource_file_
 from tethysext.atcore.mixins.file_collection_mixin import FileCollectionMixin
 
 
-class HydraulicStructuresHydraulicInfrastructureResource(SpatialResource, FileCollectionMixin):
+class HydraulicInfrastructureResource(SpatialResource, FileCollectionMixin):
     # Resource Types
-    TYPE = 'hydraulic_structures_hydraulic_infrastructure_resource'
+    TYPE = 'hydraulic_infrastructure_resource'
     DISPLAY_TYPE_SINGULAR = 'Hydraulic Infrastructure'
     DISPLAY_TYPE_PLURAL = 'Hydraulic Infrastructures'
 
     file_collections = relationship(FileCollection, secondary=resource_file_collection_association,
-                                    backref=backref('hydraulic_structures_hydraulic_infrastructure', uselist=False))
+                                    backref=backref('hydraulic_infrastructure', uselist=False))
 
     # Polymorphism
     __mapper_args__ = {

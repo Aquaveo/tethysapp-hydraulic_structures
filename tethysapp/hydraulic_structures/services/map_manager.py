@@ -12,7 +12,7 @@ from django.contrib import messages
 from tethys_sdk.gizmos import MapView, MVView
 
 from tethysext.atcore.services.map_manager import MapManagerBase
-from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresProjectAreaResource, HydraulicStructuresHealthInfrastructureResource, HydraulicStructuresHydraulicInfrastructureResource
+from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresProjectAreaResource, HealthInfrastructureResource, HydraulicInfrastructureResource
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
@@ -123,8 +123,8 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 map_layers.extend(project_area_layers)
 
                 # Build health_infrastructure layers
-                health_infrastructures = session.query(HydraulicStructuresHealthInfrastructureResource) \
-                    .filter(HydraulicStructuresHealthInfrastructureResource.extent is not None) \
+                health_infrastructures = session.query(HealthInfrastructureResource) \
+                    .filter(HealthInfrastructureResource.extent is not None) \
                     .all()
                 for health_infrastructure in health_infrastructures:
                     health_infrastructure_layer = self.build_boundary_layer_for_resource(
@@ -136,8 +136,8 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 map_layers.extend(health_infrastructure_layers)
 
                 # Build hydraulic_infrastructure layers
-                hydraulic_infrastructures = session.query(HydraulicStructuresHydraulicInfrastructureResource) \
-                    .filter(HydraulicStructuresHydraulicInfrastructureResource.extent is not None) \
+                hydraulic_infrastructures = session.query(HydraulicInfrastructureResource) \
+                    .filter(HydraulicInfrastructureResource.extent is not None) \
                     .all()
                 for hydraulic_infrastructure in hydraulic_infrastructures:
                     hydraulic_infrastructure_layer = self.build_boundary_layer_for_resource(

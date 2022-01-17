@@ -23,16 +23,16 @@ class HydraulicStructuresProjectAreaResource(SpatialResource, FileCollectionMixi
                                     backref=backref('project_area', uselist=False))
 
     health_infrastructures = relationship(
-        'HydraulicStructuresHealthInfrastructureResource',
+        'HealthInfrastructureResource',
         primaryjoin='or_('
                     'func.ST_Contains(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicStructuresHealthInfrastructureResource.extent)).as_comparison(1, 2)'
+                    'remote(HealthInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_CoveredBy(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicStructuresHealthInfrastructureResource.extent)).as_comparison(1, 2)'
+                    'remote(HealthInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_Overlaps(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicStructuresHealthInfrastructureResource.extent)).as_comparison(1, 2)'
+                    'remote(HealthInfrastructureResource.extent)).as_comparison(1, 2)'
                     ')',
         backref=backref('health_infrastructure_project_areas', uselist=True),
         viewonly=True,
@@ -40,16 +40,16 @@ class HydraulicStructuresProjectAreaResource(SpatialResource, FileCollectionMixi
         sync_backref=False
     )
     hydraulic_infrastructures = relationship(
-        'HydraulicStructuresHydraulicInfrastructureResource',
+        'HydraulicInfrastructureResource',
         primaryjoin='or_('
                     'func.ST_Contains(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicStructuresHydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_CoveredBy(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicStructuresHydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
                     ','
                     'func.ST_Overlaps(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicStructuresHydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
+                    'remote(HydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
                     ')',
         backref=backref('hydraulic_infrastructure_project_areas', uselist=True),
         viewonly=True,
