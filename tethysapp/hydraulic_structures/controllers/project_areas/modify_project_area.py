@@ -11,6 +11,7 @@ import os
 import json
 import zipfile
 import geopandas as gpd
+from shapely.geometry import Polygon, MultiPolygon
 import traceback
 
 from django.contrib import messages
@@ -18,7 +19,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from tethys_sdk.permissions import permission_required, has_permission
-from tethys_sdk.compute import get_scheduler
 from tethys_sdk.workspaces import user_workspace
 from tethys_apps.utilities import get_active_app
 from tethys_gizmos.gizmo_options import TextInput, SelectInput
@@ -30,9 +30,7 @@ from tethysext.atcore.exceptions import ATCoreException
 from tethysext.atcore.gizmos import SpatialReferenceSelect
 from tethysext.atcore.services.spatial_reference import SpatialReferenceService
 
-from tethysapp.hydraulic_structures.services.upload import UploadProjectAreaWorkflow
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
-from tethysapp.hydraulic_structures.job_scripts import create_extent_layer_executable
 from tethysapp.hydraulic_structures.app import HydraulicStructures as app
 
 __all__ = ['ModifyProjectArea']
@@ -224,7 +222,7 @@ class ModifyProjectArea(ModifyResource):
 
             # Define form
             resource_name_input = TextInput(
-                display_text='Name',
+                display_text='Nombre',
                 name='resource-name',
                 placeholder='e.g.: My {}'.format(_Resource.DISPLAY_TYPE_SINGULAR.title()),
                 initial=resource_name,
@@ -232,16 +230,17 @@ class ModifyProjectArea(ModifyResource):
             )
 
             resource_area_type_input = SelectInput(
-                display_text='Area Type',
+                display_text='Tipo de Área',
                 name='resource-area-type',
                 options=[
                     ('Región Hidrográfica', 'hydro_region'),
                     ('Región Hidrogeológica', 'hydrogeo_region'),
+                    ('Áreas de Riego', 'irrigation'),
                     ('Provincia', 'city'),
                     ('Municipio', 'municipality'),
                     ('Comunidad', 'community')
                 ],
-                select2_options={'placeholder': 'Select an area type', 'allowClear': True}
+                select2_options={'placeholder': 'Seleccione un tipo de área', 'allowClear': True}
             )
 
             # Initial spatial reference value
@@ -261,9 +260,9 @@ class ModifyProjectArea(ModifyResource):
 
             # Spatial reference select gizmo
             spatial_reference_select = SpatialReferenceSelect(
-                display_name='Spatial Reference System',
+                display_name='Sistema de Referencia Espacial',
                 name='spatial-ref-select',
-                placeholder='Spatial Reference System',
+                placeholder='Seleccione un Sistema de Referencia Espacial',
                 min_length=2,
                 query_delay=500,
                 initial=srid_initial,
@@ -275,7 +274,7 @@ class ModifyProjectArea(ModifyResource):
             organization_options = request_app_user.get_organizations(session, request, as_options=True)
 
             organization_select = SelectInput(
-                display_text='Organization(s)',
+                display_text='Organizaciones',
                 name='assign-organizations',
                 multiple=True,
                 initial=selected_organizations,
@@ -420,13 +419,20 @@ class ModifyProjectArea(ModifyResource):
             geojson_data = json.load(geojson_file)
             # Use the first feature as extent.
             features = geojson_data['features']
-            extent_dict = {"type": "GeometryCollection", "geometries": []}
+
+            polygon_list = []
             property_list = []
+
             for feature in features:
-                extent_dict['geometries'].append(feature['geometry'])
                 property_list.append(feature['properties'])
+                if feature['geometry']['type'] == 'Polygon':
+                    polygon_list.append(Polygon([tuple(l) for l in feature['geometry']['coordinates'][0]]))
+                elif feature['geometry']['type'] == 'MultiPolygon':
+                    for polygon in feature['geometry']['coordinates']:
+                        polygon_list.append(Polygon([tuple(l) for l in polygon[0]]))
+            multi_polygon = MultiPolygon(polygon_list)
 
             resource.set_attribute('area_properties', property_list)
 
             srid = resource.get_attribute('srid')
-            resource.set_extent(obj=extent_dict, object_format='dict', srid=srid)
+            resource.set_extent(obj=multi_polygon.wkt, object_format='wkt', srid=srid)

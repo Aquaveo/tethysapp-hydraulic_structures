@@ -1,5 +1,5 @@
 {% extends "atcore/map_view/map_view.html" %}
-{% load tethys_gizmos staticfiles %}
+{% load tethys_gizmos static %}
 
 {% block header_buttons %}
   {% if admin_user %}
@@ -30,7 +30,7 @@
           <h4 class="modal-title" id="help-modal-label">Quick Tip</h4>
         </div>
         <div class="modal-body">
-          <p>Para empezar, seleccione un área de división del mapa y hacer click en <strong>Subir Área de División</strong></p>
+          <p>Para empezar, seleccione un área de división en el mapa y hacer click en <strong>Ir a Área de División</strong></p>
         </div>
         <div class="modal-footer">
           <div class="div-left">

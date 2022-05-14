@@ -24,6 +24,7 @@ class ManageProjectAreas(ManageResources, FileCollectionsControllerMixin):
     """
     Controller for manage_resources page.
     """
+    template_name = "hydraulic_structures/resources/manage_project_area_resource.html"
     base_template = 'hydraulic_structures/base.html'
 
     def get_launch_url(self, request, resource):
@@ -50,16 +51,15 @@ class ManageProjectAreas(ManageResources, FileCollectionsControllerMixin):
         Raises:
             Exception: raise an appropriate exception if an error occurs. The message will be sent as the 'error' field of the JsonResponse.
         """  # noqa: E501
-        self.delete_file_collections(
-            session=session,
-            resource=resource,
-            log=log
-        )
+        # Delete file collections
+        self.delete_file_collections(session=session, resource=resource, log=log)
 
-        # Delete extent layer
+        # Delete geoserver layer
         gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
+        resource_id = str(resource.id)
+        datastore_name = f'app_users_resources_extent_{resource_id}'
         hydraulic_structures_spatial_manager = HydraulicStructuresSpatialManager(gs_engine)
         hydraulic_structures_spatial_manager.delete_extent_layer(
-            datastore_name=HydraulicStructuresSpatialManager.DATASTORE,
-            resource_id=str(resource.id),
+            datastore_name=datastore_name,
+            resource_id=resource_id
         )

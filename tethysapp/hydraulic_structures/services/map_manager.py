@@ -83,7 +83,7 @@ class HydraulicStructuresMapManager(MapManagerBase):
             Session = app.get_persistent_store_database('primary_db', as_sessionmaker=True)
             session = Session()
 
-            # If resource_id is given, compose map creates a ste mission model view for specific model
+            # If resource_id is given, compose map creates a model view for specific model
             if resource_id:
                 project_area = session.query(HydraulicStructuresProjectAreaResource).get(resource_id)
                 project_area_layer = self.build_boundary_layer_for_resource(

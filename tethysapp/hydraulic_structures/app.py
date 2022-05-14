@@ -158,7 +158,7 @@ class HydraulicStructures(TethysAppBase):
         url_maps.extend((
             UrlMap(
                 name='project_area_details_tab',
-                url='hydraulic_structures/project_areas/{resource_id}/details/{tab_slug}',
+                url='project-areas/{resource_id}/details/{tab_slug}',
                 controller=ProjectAreaDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',
@@ -172,7 +172,7 @@ class HydraulicStructures(TethysAppBase):
         url_maps.extend((
             UrlMap(
                 name='hydraulic_infrastructure_details_tab',
-                url='hydraulic_structures/hydraulic_infrastructures/{resource_id}/details/{tab_slug}',
+                url='hydraulic-infrastructures/{resource_id}/details/{tab_slug}',
                 controller=HydraulicInfrastructureResourceDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',
@@ -186,7 +186,7 @@ class HydraulicStructures(TethysAppBase):
         url_maps.extend((
             UrlMap(
                 name='model_details_tab',
-                url='hydraulic_structures/health_infrastructures/{resource_id}/details/{tab_slug}',
+                url='health-infrastructures/{resource_id}/details/{tab_slug}',
                 controller=HealthInfrastructureResourceDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',

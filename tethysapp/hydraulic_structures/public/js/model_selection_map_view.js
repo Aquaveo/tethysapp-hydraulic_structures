@@ -70,7 +70,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
             var csrf_token = get_csrf_token();
             $.ajax({
                 type: 'get',
-                url: '/apps/hydraulic_structures/update-help-modal-status/',
+                url: '/apps/hydraulic-structures/update-help-modal-status/',
                 data: {'status': !this.checked,
                        'page_name': 'model_selection'},
                 beforeSend: xhr => {
@@ -124,12 +124,12 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
         let action_button =
             '<div class="action-btn-wrapper">' +
                 '<a class="btn btn-primary btn-popup" ' +
-                    'href="/apps/hydraulic_structures/irrigation-zones/' + resource_id + '/details/summary/"' +
+                    'href="/apps/hydraulic-structures/project-areas/' + resource_id + '/details/summary/"' +
                     'role="button"' +
                     'data-feature-id="' + fid +'"' +
                     'data-layer-id="' + layer_name + '"' +
                     'id="map-view-plot-button"' +
-                '>Subir Área de División</a>' +
+                '>Ir a Área de División</a>' +
             '</div>';
 
         return action_button;
