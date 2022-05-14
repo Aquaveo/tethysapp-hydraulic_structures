@@ -94,7 +94,7 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 layer_groups.append(
                     self.build_layer_group(
                         id='project_area_layers',
-                        display_name='Project Area',
+                        display_name='Área de División',
                         layers=[project_area_layer],
                         layer_control='checkbox',
                         visible=True,
@@ -152,21 +152,21 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 layer_groups.extend([
                     self.build_layer_group(
                         id='project_area_layers',
-                        display_name='Project Areas',
+                        display_name='Áreas de División',
                         layers=project_area_layers,
                         layer_control='checkbox',
                         visible=True,
                     ),
                     self.build_layer_group(
                         id='health_infrastructure_layers',
-                        display_name='Health Infrastructures',
+                        display_name='Estructuras Sanitarias',
                         layers=health_infrastructure_layers,
                         layer_control='checkbox',
                         visible=False,
                     ),
                     self.build_layer_group(
                         id='hydraulic_infrastructure_layers',
-                        display_name='Hydraulic Infrastructures',
+                        display_name='Estructuras Hidráulicas',
                         layers=hydraulic_infrastructure_layers,
                         layer_control='checkbox',
                         visible=False,

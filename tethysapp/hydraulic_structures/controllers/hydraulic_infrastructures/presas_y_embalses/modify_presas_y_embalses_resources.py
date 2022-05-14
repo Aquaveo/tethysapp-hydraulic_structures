@@ -28,17 +28,17 @@ class ModifyHydraulicInfrastructureResource(ModifyResource):
     include_srid = True
     srid_required = True
     srid_default = ""
-    srid_error = "Spatial reference is required."
+    srid_error = "Referencia espacial requerida."
 
     # File upload options
     include_file_upload = True
     file_upload_required = True
     file_upload_multiple = False
     file_upload_accept = ".zip"
-    file_upload_label = "Hydraulic Infrastructure Files"
-    file_upload_help = "Upload an archive containing the hydraulic infrastructure files. Include a __extent__.geojson file  to set " \
-                       "the spatial extent for the hydraulic infrastructure."
-    file_upload_error = "Must provide file(s)."
+    file_upload_label = "Archivos Estructura Hidráulica"
+    file_upload_help = "Subir archivos de estructura hidráulica. Incluir __extent__.geojson para establecer " \
+                       "la extensión espacial de la estructura."
+    file_upload_error = "Debe proveer archivos."
     template_name = 'hydraulic_structures/resources/modify_hydraulic_infrastructure_resource.html'
 
     def get_context(self, context):
@@ -52,28 +52,28 @@ class ModifyHydraulicInfrastructureResource(ModifyResource):
 
         context = super().get_context(context)
 
-        hydraulic_infrastructure_features = [('Dams and Reservoirs', 'dams_and_reservoirs'),
-                                             ('Hydroelectric Dams', 'hydroelectric_dams'),
-                                             ('Irrigation Systems - Intake Works', 'is_intake_works'),
-                                             ('Irrigation Systems - Main Irrigation Channels',
+        hydraulic_structure_features = [('Presas y Embalses', 'dams_and_reservoirs'),
+                                             ('Presas Hidroeléctricas', 'hydroelectric_dams'),
+                                             ('Sistemas de Irrigación - Obras de Toma', 'is_intake_works'),
+                                             ('Sistemas de Irrigación - Canales de Irrigación Principales',
                                               'is_main_irrigation_channels'),
-                                             ('Irrigation Systems - Secondary and Lateral Irrigation Channels',
+                                             ('Sistemas de Irrigación - Canales de Irrigación Secundarios y Laterales',
                                               'is_secondary_and_lateral_irrigation_channels'),
-                                             ('Irrigation Systems - Drainage Channels', 'is_drainage_channels'),
-                                             ('Irrigation Systems - Storage Ponds', 'is_storage_ponds'),
-                                             ('Diversion Dams', 'diversion_dams'),
-                                             ('River Protection Walls', 'river_protection_walls')]
+                                             ('Sistemas de Irrigación - Canal de Drenaje', 'is_drainage_channels'),
+                                             ('Sistemas de Irrigación - Laguna de Almacenamiento', 'is_storage_ponds'),
+                                             ('Diques Derivadores', 'diversion_dams'),
+                                             ('Muros De Proteccion Fluvial', 'river_protection_walls')]
 
-        hydraulic_infrastructure_select = SelectInput(
-            display_text='Hydraulic Infrastructure Type',
+        hydraulic_structure_select = SelectInput(
+            display_text='Tipo de Estructura Hidráulica',
             name='assign-hydraulic-infrastructure-type',
             multiple=False,
-            initial=hydraulic_infrastructure_features[0],
-            options=hydraulic_infrastructure_features,
+            initial=hydraulic_structure_features[0],
+            options=hydraulic_structure_features,
             error=hydraulic_infrastructure_select_error,
         )
 
-        context['hydraulic_infrastructure_select'] = hydraulic_infrastructure_select
+        context['hydraulic_infrastructure_select'] = hydraulic_structure_select
 
         return context
 
@@ -103,7 +103,7 @@ class ModifyHydraulicInfrastructureResource(ModifyResource):
 
             # Create file collection and relationship with hydraulic_infrastructure resource
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
-            file_collection = file_database.new_collection(meta={'display_name': 'Hydraulic Infrastructure Files'})
+            file_collection = file_database.new_collection(meta={'display_name': 'Archivos de Estructura Hidráulica'})
             resource.file_collections.append(file_collection.instance)
 
             for item in os.listdir(file_dir):

@@ -20,19 +20,19 @@
   {% url 'hydraulic_structures:app_users_manage_organizations' as manage_organizations_url %}
   {% url 'hydraulic_structures:app_users_user_account' as user_account_url %}
 
-  <li {% if request.path == home_url %}class="active"{% endif %}><a href="{{ home_url }}">Map</a></li>
+  <li {% if request.path == home_url %}class="active"{% endif %}><a href="{{ home_url }}">Mapa</a></li>
   {% if show_resources_link %}
-    <li {% if request.path == manage_resource_url %}class="active"{% endif %}><a href="{{ manage_resource_url }}">Project Areas</a></li>
-    <li {% if request.path == manage_hydraulic_infrastructures_resource_url %}class="active"{% endif %}><a href="{{ manage_hydraulic_infrastructures_resource_url }}">Hydraulic Infrastructures</a></li>
-    <li {% if request.path == manage_health_infrastructures_resource_url %}class="active"{% endif %}><a href="{{ manage_health_infrastructures_resource_url }}">Health Infrastructures</a></li>
+    <li {% if request.path == manage_resource_url %}class="active"{% endif %}><a href="{{ manage_resource_url }}">Áreas de División</a></li>
+    <li {% if request.path == manage_hydraulic_infrastructures_resource_url %}class="active"{% endif %}><a href="{{ manage_hydraulic_infrastructures_resource_url }}">Estructuras Hidráulicas</a></li>
+    <li {% if request.path == manage_health_infrastructures_resource_url %}class="active"{% endif %}><a href="{{ manage_health_infrastructures_resource_url }}">Estructuras Sanitarias</a></li>
 {% endif %}
   {% if show_users_link %}
-    <li {% if request.path == manage_users_url %}class="active"{% endif %}><a href="{{ manage_users_url }}">Users</a></li>
+    <li {% if request.path == manage_users_url %}class="active"{% endif %}><a href="{{ manage_users_url }}">Usuarios</a></li>
   {% endif %}
   {% if show_organizations_link %}
-    <li {% if request.path == manage_organizations_url %}class="active"{% endif %}><a href="{{ manage_organizations_url }}">Organizations</a></li>
+    <li {% if request.path == manage_organizations_url %}class="active"{% endif %}><a href="{{ manage_organizations_url }}">Organizaciones</a></li>
   {% endif %}
-  <li {% if request.path == user_account_url %}class="active"{% endif %}><a href="{{ user_account_url }}">My Account</a></li>
+  <li {% if request.path == user_account_url %}class="active"{% endif %}><a href="{{ user_account_url }}">Mi Cuenta</a></li>
 {% endblock %}
 
 {% block app_content %}

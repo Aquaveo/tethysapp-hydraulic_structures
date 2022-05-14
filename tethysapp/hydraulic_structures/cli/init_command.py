@@ -11,8 +11,6 @@ from tethysext.atcore.cli.cli_helpers import print_header, print_success, print_
 from tethysext.atcore.exceptions import FileDatabaseNotFoundError, UnboundFileDatabaseError
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicStructuresSpatialManager
 
-RESOURCES = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources')
-
 
 def init_hydraulic_structures(arguments):
     """
@@ -27,10 +25,10 @@ def init_hydraulic_structures(arguments):
     fdb_errors_occurred = False
     gs_errors_occurred = False
 
-    print_header('Initializing HYDRAULICSTRUCTURES...')
+    print_header('Initializing HYDRAULIC STRUCTURES...')
 
     # Initialize file database
-    print_info('Initializing HYDRAULICSTRUCTURES File Database...')
+    print_info('Initializing HYDRAULIC STRUCTURES File Database...')
 
     Session = app.get_persistent_store_database(app.DATABASE_NAME, as_sessionmaker=True)
     session = Session()
@@ -50,7 +48,7 @@ def init_hydraulic_structures(arguments):
         if fdb_instance:
             print_info(f'Using existing File Database with ID: {fdb_id}.')
     except TethysAppSettingNotAssigned:
-        print_info('Creating new HYDRAULICSTRUCTURES File Database.')
+        print_info('Creating new HYDRAULIC STRUCTURES File Database.')
         fdb_new_instance = FileDatabaseClient.new(session, file_database_root).instance
         fdb_id = fdb_new_instance.id
 
@@ -68,7 +66,7 @@ def init_hydraulic_structures(arguments):
         print_error('The file database ID must be a hexadecimal UUID string.')
 
     # Initialize workspace
-    print_info('Initializing HYDRAULICSTRUCTURES GeoServer Workspace...')
+    print_info('Initializing HYDRAULIC STRUCTURES GeoServer Workspace...')
     url = parse_url(arguments.gsurl)
 
     geoserver_engine = GeoServerSpatialDatasetEngine(

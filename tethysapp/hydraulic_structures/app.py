@@ -2,9 +2,8 @@ import os
 import sys
 from pathlib import Path
 
-from tethys_apps.models import SpatialDatasetServiceSetting
 from tethys_sdk.base import TethysAppBase, url_map_maker
-from tethys_sdk.app_settings import PersistentStoreDatabaseSetting, CustomSetting
+from tethys_sdk.app_settings import CustomSetting, PersistentStoreDatabaseSetting, SpatialDatasetServiceSetting
 
 
 class HydraulicStructures(TethysAppBase):
@@ -12,14 +11,14 @@ class HydraulicStructures(TethysAppBase):
     Tethys app class for HydraulicStructures.
     """
 
-    name = 'Hydraulic Structures'
+    name = 'Estructuras Hidráulicas'
     index = 'hydraulic_structures:home'
     icon = 'hydraulic_structures/images/icon.gif'
     package = 'hydraulic_structures'
     root_url = 'hydraulic-structures'
-    color = '#d35400'
-    description = 'Storing Hydraulic Structures Data'
-    tags = '"Hydraulic Structures", "Hydraulic"'
+    color = '#2A3890'
+    description = 'Esta aplicación permite visualizar e interactuar con estructuras hidráulicas y sanitarias.'
+    tags = '"Hydraulic Structures", "Hydraulica"'
     enable_feedback = False
     feedback_emails = []
 
@@ -28,8 +27,6 @@ class HydraulicStructures(TethysAppBase):
     GEOSERVER_NAME = 'primary_geoserver'
     DATABASE_NAME = 'primary_db'
     FILE_DATABASE_ID_NAME = 'file_database_id'
-    LINUX_CONDOR_FDB_ROOT_NAME = 'linux_condor_fdb_root'
-    WINDOWS_CONDOR_FDB_ROOT_NAME = 'windows_condor_fdb_root'
     FILE_DATABASE_ROOT = os.path.join(os.path.dirname(__file__), 'workspaces', 'app_workspace', 'file_databases')
 
     def custom_settings(self):
@@ -41,18 +38,6 @@ class HydraulicStructures(TethysAppBase):
                 name=self.FILE_DATABASE_ID_NAME,
                 type=CustomSetting.TYPE_STRING,
                 description='File Database ID',
-                required=True
-            ),
-            CustomSetting(
-                name=self.LINUX_CONDOR_FDB_ROOT_NAME,
-                type=CustomSetting.TYPE_STRING,
-                description='The File Database root directory for the Linux condor worker.',
-                required=False
-            ),
-            CustomSetting(
-                name='cesium_api_token',
-                type=CustomSetting.TYPE_STRING,
-                description='Cesium API Token',
                 required=True
             ),
         )
@@ -262,26 +247,12 @@ class HydraulicStructures(TethysAppBase):
         return str(Path(sys.modules['tethysapp'].hydraulic_structures.__file__).parent / 'job_scripts')
 
     @classmethod
-    def get_file_database_root(cls, relative_to='app'):
+    def get_file_database_root(cls):
         """
         Resolve the FileDatabaseRoot relative to system given. The file database root location will vary depending on
          which system you are accessing it from.
 
-        Args:
-            relative_to (str): One of 'app', 'condor-linux', or 'condor-windows'.
-
         Returns:
             str: the path to the directory containing file databases.
         """  # noqa: E501
-        if relative_to == 'app':
-            return cls.FILE_DATABASE_ROOT
-
-        if relative_to == 'condor-linux':
-            # If the setting isn't defined, return the FDB root located in app_workspaces
-            linux_fdb_root = cls.get_custom_setting(cls.LINUX_CONDOR_FDB_ROOT_NAME)
-            return linux_fdb_root if linux_fdb_root else cls.FILE_DATABASE_ROOT
-
-        elif relative_to == 'condor-windows':
-            return cls.get_custom_setting(cls.WINDOWS_CONDOR_FDB_ROOT_NAME)
-
-        return None
+        return cls.FILE_DATABASE_ROOT

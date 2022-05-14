@@ -129,7 +129,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
                     'data-feature-id="' + fid +'"' +
                     'data-layer-id="' + layer_name + '"' +
                     'id="map-view-plot-button"' +
-                '>Load Project Area</a>' +
+                '>Subir Área de División</a>' +
             '</div>';
 
         return action_button;

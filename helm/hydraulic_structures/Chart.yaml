@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: "latest"
-description: "Tethys App: HYDRAULICSTRUCTURES"
-name: hydraulic_structures
-version: 0.3.0

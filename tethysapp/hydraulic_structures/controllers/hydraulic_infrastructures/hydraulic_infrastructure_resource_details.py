@@ -17,6 +17,6 @@ class HydraulicInfrastructureResourceDetails(TabbedResourceDetails):
     """
     base_template = 'hydraulic_structures/base.html'
     tabs = (
-        {'slug': 'summary', 'title': 'Summary', 'view': HydraulicInfrastructureSummaryTab},
-        {'slug': 'files', 'title': 'Files', 'view': HydraulicInfrastructureFilesTab},
+        {'slug': 'summary', 'title': 'Resumen', 'view': HydraulicInfrastructureSummaryTab},
+        {'slug': 'files', 'title': 'Archivos', 'view': HydraulicInfrastructureFilesTab},
     )

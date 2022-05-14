@@ -12,6 +12,6 @@ requirements:
     packages:
     - pandas
     - param
-    - geopandas
+    - geopandas==0.10.2
 
 post:

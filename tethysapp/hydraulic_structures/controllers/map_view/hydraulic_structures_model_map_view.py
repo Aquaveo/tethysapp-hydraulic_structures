@@ -93,7 +93,7 @@ class HydraulicStructuresModelMapView(MapView):
         # if no resource_id, template and map title are changed for model_selection_map_view
         else:
             self.template_name = 'hydraulic_structures/map_view/project_area_selection_map_view.html'
-            context['nav_title'] = 'Water Demand for Irrigation Map'
+            context['nav_title'] = 'Mapa de Estructuras Hidráulicas y Sanitarias'
             context['show_custom_layer'] = False
             context['show_helpers'] = False
 

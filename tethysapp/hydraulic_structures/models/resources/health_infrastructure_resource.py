@@ -6,6 +6,7 @@
 * Copyright: (c) Aquaveo 2020
 ********************************************************************************
 """
+from django.utils.decorators import classproperty
 from sqlalchemy.orm import backref, relationship
 
 from tethysext.atcore.models.app_users import SpatialResource
@@ -16,8 +17,8 @@ from tethysext.atcore.mixins.file_collection_mixin import FileCollectionMixin
 class HealthInfrastructureResource(SpatialResource, FileCollectionMixin):
     # Resource Types
     TYPE = 'health_infrastructure_resource'
-    DISPLAY_TYPE_SINGULAR = 'Health Infrastructure'
-    DISPLAY_TYPE_PLURAL = 'Health Infrastructures'
+    DISPLAY_TYPE_SINGULAR = 'Estructura Sanitaria'
+    DISPLAY_TYPE_PLURAL = 'Estructuras Sanitarias'
 
     file_collections = relationship(FileCollection, secondary=resource_file_collection_association,
                                     backref=backref('health_infrastructure', uselist=False))
@@ -26,3 +27,7 @@ class HealthInfrastructureResource(SpatialResource, FileCollectionMixin):
     __mapper_args__ = {
         'polymorphic_identity': TYPE,
     }
+
+    @classproperty
+    def SLUG(self):
+        return 'health_infrastructures'

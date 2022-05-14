@@ -1,0 +1,68 @@
+{% extends "atcore/app_users/modify_resource.html" %}
+{% load static tethys_gizmos %}
+
+{% block app_content %}
+  <div class="row">
+    <div class="col-md-12">
+      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ type_singular }}</h1>
+      <form id="new-resource-form" method="post" action="" {% if show_file_upload_field %}enctype="multipart/form-data"{% endif %}>
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6">
+            {# NAME FIELD #}
+            {% gizmo resource_name_input %}
+
+            {# AREA TYPE #}
+            {% gizmo resource_area_type %}
+
+            {# DESCRIPTION FIELD #}
+            <div class="form-group" id="resource-description-group">
+              <label for="resource-description">Description</label>
+              <textarea id="resource-description"
+                        name="resource-description"
+                        class="form-control"
+                        rows=5
+                        style="width: 100%;">{{ resource_description }}</textarea>
+            </div>
+
+            {# ORGANIZATIONS FIELD #}
+            {% gizmo organization_select %}
+
+            {# SPATIAL REFERENCE FIELD #}
+            {% if show_srid_field %}
+              {% gizmo spatial_reference_select %}
+            {% endif %}
+            {{ resource_srid_error }}
+
+            {% block custom_app_content %}
+            {% endblock %}
+
+            {# FILE UPLOAD FIELD #}
+            {% if show_file_upload_field %}
+            <div class="form-group {% if file_upload_error %}has-error{% endif %}" id="input-file-upload-wrapper">
+              <label class="control-label" for="input-file-upload">{{ file_upload_label }}</label>
+              <div class="input-file-wrapper">
+                <input id="input-file-upload"
+                       class="file-input"
+                       name="input-file-upload"
+                       type="file"
+                       accept="{{ file_upload_accept }}"
+                       {% if file_upload_multiple %}multiple{% endif %}>
+                <label for="input-file-upload" class="btn btn-default btn-file-input">Browse</label>
+              </div>
+              <span class="help-block">{{ file_upload_error }}</span>
+            </div>
+            {% endif %}
+            {{ file_upload_error }}
+
+            <a class="btn btn-default" href="{% url next_controller %}">Cancel</a>
+            <input type="submit"
+                   class="btn btn-success"
+                   name="modify-resource-submit"
+                   value="{% if editing %}Save Changes{% else %}Create {{ type_singular }}{% endif %}">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -17,6 +17,6 @@ class HealthInfrastructureResourceDetails(TabbedResourceDetails):
     """
     base_template = 'hydraulic_structures/base.html'
     tabs = (
-        {'slug': 'summary', 'title': 'Summary', 'view': HealthInfrastructureSummaryTab},
-        {'slug': 'files', 'title': 'Files', 'view': HealthInfrastructureFilesTab},
+        {'slug': 'summary', 'title': 'Resumen', 'view': HealthInfrastructureSummaryTab},
+        {'slug': 'files', 'title': 'Archivos', 'view': HealthInfrastructureFilesTab},
     )

@@ -10,13 +10,12 @@ from tethysext.atcore.controllers.resources import ResourceSummaryTab
 from tethysext.atcore.mixins.file_collection_controller_mixin import FileCollectionsControllerMixin
 
 from tethysapp.hydraulic_structures.services.spatial_managers.hydraulic_structures import HydraulicInfrastructureSpatialManager
-
 from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructuresMapManager
 
 
 class HydraulicInfrastructureSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
     has_preview_image = True
-    preview_image_title = "Extent"
+    preview_image_title = "Extensión"
 
     def get_map_manager(self):
         return HydraulicStructuresMapManager
