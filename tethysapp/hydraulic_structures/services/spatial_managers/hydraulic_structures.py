@@ -21,4 +21,22 @@ class HealthInfrastructureSpatialManager(HydraulicInfrastructureSpatialManager, 
 
 
 class HydraulicStructuresProjectAreaSpatialManager(ProjectAreaSpatialManager, HydraulicStructuresSpatialManager):
-    pass
+    def get_extent_for_project(self, datastore_name, resource_id):
+        """
+        Get the extent. This will return the list of the extent in EPSG 4326.
+        The query in resource_extent_layer_view transforms all features to 4326.
+
+        Args:
+            For example: app_primary_db.
+            resource_id(str): id of the Resources.
+        """
+        # feature name
+        feature_name = self.get_extent_layer_name(resource_id)
+
+        extent = self.gs_api.get_layer_extent(
+            workspace=self.WORKSPACE,
+            datastore_name=feature_name,
+            feature_name=feature_name,
+        )
+
+        return extent

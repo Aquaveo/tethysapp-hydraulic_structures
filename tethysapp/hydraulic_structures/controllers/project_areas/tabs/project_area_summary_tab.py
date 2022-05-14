@@ -16,7 +16,7 @@ from tethysapp.hydraulic_structures.services.map_manager import HydraulicStructu
 
 class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
     has_preview_image = True
-    preview_image_title = "Extent"
+    preview_image_title = "Cobertura"
 
     def get_map_manager(self):
         return HydraulicStructuresMapManager
@@ -35,9 +35,10 @@ class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
         tab_content = [column1, column2]
 
         # Generate summary of the models and hydraulic_infrastructures associated with this irrigation zone
-        md_summary = ('Related Resources', {
+        md_summary = ('Recursos relacionados', {
             'Workflows': len(resource.workflows),
-            'Hydraulic Infrastructures': len(resource.hydraulic_infrastructures),
+            'Estructuras Hidráulicas': len(resource.hydraulic_infrastructures),
+            'Estructuras Sanitarias': len(resource.hydraulic_infrastructures),
         })
         column2.append(md_summary)
 

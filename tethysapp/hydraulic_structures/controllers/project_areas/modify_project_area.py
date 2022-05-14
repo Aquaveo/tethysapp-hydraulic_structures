@@ -355,9 +355,8 @@ class ModifyProjectArea(ModifyResource):
             file_collection = file_database.new_collection(meta={'display_name': 'Archivos de Soporte'})
 
             for filename in os.listdir(file_dir):
-                if filename == '__extent__.geojson':
-                    self.add_extent_to_db(os.path.join(file_dir, filename), resource)
-                elif filename.endswith('.shp'):
+                if filename.endswith('.shp'):
+                    shp_base = filename.replace('.shp', '')
                     shpfile_path = os.path.join(file_dir, filename)
                     json_path = os.path.join(file_dir, '__extent__.geojson')
                     shpfile = gpd.read_file(shpfile_path)
@@ -388,18 +387,18 @@ class ModifyProjectArea(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
 
             # Create extent layer
-            sm_module = HydraulicStructuresSpatialManager.__module__
-            sm_basename = HydraulicStructuresSpatialManager.__name__
-            create_extent_layer_executable.run(
-                datastore_name=HydraulicStructuresSpatialManager.DATASTORE,
-                resource_id=str(resource.id),
-                resource_db_url=app.get_persistent_store_database(app.DATABASE_NAME, as_url=True),
-                geoserver_endpoint=gs_engine.endpoint,
-                geoserver_username=gs_engine.username,
-                geoserver_password=gs_engine.password,
-                spatial_manager=f'{sm_module}.{sm_basename}',
-                status_key='create_extent_layer'
+            feature_name = f'app_users_resources_extent_{resource_id}'
+            gs_engine.create_shapefile_resource(
+                store_id=f'{HydraulicStructuresSpatialManager.WORKSPACE}:{feature_name}',
+                shapefile_base=os.path.join(file_collection.path, shp_base),
+                overwrite=True
             )
+
+            session.refresh(resource)
+            resource.set_status('create_extent_layer', 'Success')
+            session.commit()
+            session.close()
+
             log.info('Project Area uploaded.')
 
     def handle_srid_changed(self, session, request, request_app_user, resource, old_srid, new_srid):
@@ -422,7 +421,12 @@ class ModifyProjectArea(ModifyResource):
             # Use the first feature as extent.
             features = geojson_data['features']
             extent_dict = {"type": "GeometryCollection", "geometries": []}
+            property_list = []
             for feature in features:
                 extent_dict['geometries'].append(feature['geometry'])
+                property_list.append(feature['properties'])
+
+            resource.set_attribute('area_properties', property_list)
+
             srid = resource.get_attribute('srid')
             resource.set_extent(obj=extent_dict, object_format='dict', srid=srid)
