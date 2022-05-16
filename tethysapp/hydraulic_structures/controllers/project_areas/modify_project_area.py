@@ -387,13 +387,13 @@ class ModifyProjectArea(ModifyResource):
 
             # Create extent layer
             feature_name = f'app_users_resources_extent_{resource_id}'
-            gs_engine.create_shapefile_resource(
+            res = gs_engine.create_shapefile_resource(
                 store_id=f'{HydraulicStructuresSpatialManager.WORKSPACE}:{feature_name}',
                 shapefile_base=os.path.join(file_collection.path, shp_base),
                 overwrite=True
             )
+            resource.set_attribute('gs_url', res['result']['wfs'])
 
-            session.refresh(resource)
             resource.set_status('create_extent_layer', 'Success')
             session.commit()
             session.close()

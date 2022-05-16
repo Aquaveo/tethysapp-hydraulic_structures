@@ -4,6 +4,7 @@ from tethysext.atcore.controllers.resources.tabs import ResourceListTab
 
 
 class ProjectAreaHydraulicInfrastructuresTab(ResourceListTab):
+    template_name = 'hydraulic_structures/resources/tabs/hydraulic_structures_resource_list_tab.html'
 
     def get_resources(self, request, resource, session, *args, **kwargs):
         """

@@ -6,10 +6,12 @@
 * Copyright: (c) Aquaveo 2019
 ********************************************************************************
 """
+import json
+import requests
 import logging
 
 from django.contrib import messages
-from tethys_sdk.gizmos import MapView, MVView
+from tethys_sdk.gizmos import MapView, MVView, MVLayer
 
 from tethysext.atcore.services.map_manager import MapManagerBase
 from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresProjectAreaResource, HealthInfrastructureResource, HydraulicInfrastructureResource
@@ -199,18 +201,21 @@ class HydraulicStructuresMapManager(MapManagerBase):
         extents_geometry = resource.get_extent(extent_type='dict')
         if extents_geometry is None:
             return None
-
-        geojson = {
-            'type': 'FeatureCollection',
-            'name': resource.name,
-            'properties': {},
-            'crs': {'type': 'name', 'properties': {'name': 'urn:ogc:def:crs:OGC:1.3:CRS84'}},
-            'features': [{
-                'type': 'Feature',
+        if resource.get_attribute('gs_url'):
+            geojson_response = requests.get(resource.get_attribute('gs_url')['geojson'])
+            geojson = json.loads(geojson_response.text)
+        else:
+            geojson = {
+                'type': 'FeatureCollection',
+                'name': resource.name,
                 'properties': {},
-                'geometry': extents_geometry
-            }]
-        }
+                'crs': {'type': 'name', 'properties': {'name': 'urn:ogc:def:crs:OGC:1.3:CRS84'}},
+                'features': [{
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': extents_geometry
+                }]
+            }
 
         # Compute bbox
         bbox = self.compute_bbox_for_extent(extents_geometry)

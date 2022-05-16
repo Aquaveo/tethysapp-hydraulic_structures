@@ -185,8 +185,8 @@ class HydraulicStructures(TethysAppBase):
 
         url_maps.extend((
             UrlMap(
-                name='model_details_tab',
-                url='health-infrastructures/{resource_id}/details/{tab_slug}',
+                name='health_infrastructure_details_tab',
+                url='hydraulic-infrastructures/{resource_id}/details/{tab_slug}',
                 controller=HealthInfrastructureResourceDetails.as_controller(
                     _app=self,
                     _persistent_store_name='primary_db',

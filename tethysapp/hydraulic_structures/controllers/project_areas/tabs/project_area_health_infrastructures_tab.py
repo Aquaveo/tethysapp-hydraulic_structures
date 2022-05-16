@@ -4,6 +4,7 @@ from tethysext.atcore.controllers.resources.tabs import ResourceListTab
 
 
 class ProjectAreaHealthInfrastructuresTab(ResourceListTab):
+    template_name = 'hydraulic_structures/resources/tabs/hydraulic_structures_resource_list_tab.html'
 
     def get_resources(self, request, resource, session, *args, **kwargs):
         """
@@ -12,7 +13,7 @@ class ProjectAreaHealthInfrastructuresTab(ResourceListTab):
         Returns:
             A list of Resources.
         """
-        return resource.models
+        return resource.health_infrastructures
 
     def get_href_for_resource(self, app_namespace, resource):
-        return reverse(f'{app_namespace}:model_details_tab', args=[resource.id, 'summary'])
+        return reverse(f'{app_namespace}:health_infrastructure_details_tab', args=[resource.id, 'summary'])

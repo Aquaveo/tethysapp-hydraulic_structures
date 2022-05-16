@@ -166,13 +166,13 @@ class ManageHealthInfrastructureResources(ManageResources, FileCollectionsContro
         """
         Get the URL for the Resource Launch button.
         """
-        return reverse("health_structures:model_details_tab", args=[resource.id, "summary"])
+        return reverse("health_structures:health_infrastructure_details_tab", args=[resource.id, "summary"])
 
     def get_error_url(self, request, resource):
         """
         Get the URL for the Resource Launch button.
         """
-        return reverse("health_structures:model_details_tab", args=[resource.id, "summary"])
+        return reverse("health_structures:health_infrastructure_details_tab", args=[resource.id, "summary"])
 
     def perform_custom_delete_operations(self, session, request, resource):
         """
