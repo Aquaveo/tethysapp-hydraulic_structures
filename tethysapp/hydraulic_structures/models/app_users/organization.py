@@ -2,8 +2,8 @@
 ********************************************************************************
 * Name: organization.py
 * Author: msouffront
-* Created On: Nov 8, 2019
-* Copyright: (c) Aquaveo 2019
+* Created On: Nov 8, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from tethysapp.hydraulic_structures.services.licenses import HydraulicStructuresLicenses

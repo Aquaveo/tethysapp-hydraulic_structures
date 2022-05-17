@@ -6,9 +6,9 @@ def river_protection_wall_create_context(
     river_protection_wall_year_init,
 ):
     river_protection_wall_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="river_protection_wall_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=river_protection_wall_year_init,
     )
 

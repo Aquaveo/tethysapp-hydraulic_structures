@@ -6,9 +6,9 @@ def hydroelectric_dam_create_context(
     hydroelectric_dam_year_init,
 ):
     hydroelectric_dam_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="dams_and_resevoirs_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=hydroelectric_dam_year_init,
     )
 

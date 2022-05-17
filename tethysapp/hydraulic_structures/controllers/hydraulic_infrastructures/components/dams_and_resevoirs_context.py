@@ -9,7 +9,7 @@ def dams_and_resevoirs_create_context(
     dams_and_resevoirs_volume_init,
 ):
     dams_and_resevoirs_purposes = SelectInput(
-        display_text="Proposito",
+        display_text="Principal Propósito",
         name="dams_and_resevoirs_purposes",
         multiple=True,
         options=[
@@ -21,9 +21,9 @@ def dams_and_resevoirs_create_context(
         initial=dams_and_resevoirs_purposes_init,
     )
     dams_and_resevoirs_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="dams_and_resevoirs_year",
-        placeholder="anio operacion",
+        placeholder="año operación",
         initial=dams_and_resevoirs_year_init,
     )
     dams_and_resevoirs_height = TextInput(
@@ -33,9 +33,9 @@ def dams_and_resevoirs_create_context(
         initial=dams_and_resevoirs_height_init,
     )
     dams_and_resevoirs_volume = TextInput(
-        display_text="Volumen Almacenado",
+        display_text="Volumen de Almacenamiento",
         name="dams_and_resevoirs_volume",
-        placeholder="volumen almacenado",
+        placeholder="volumen de almacenamiento",
         initial=dams_and_resevoirs_volume_init,
     )
 

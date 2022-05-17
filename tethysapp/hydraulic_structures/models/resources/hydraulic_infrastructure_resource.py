@@ -1,9 +1,9 @@
 """
 ********************************************************************************
 * Name: hydraulic_infrastructure_resource.py
-* Author: glarsen
-* Created On: November 18, 2020
-* Copyright: (c) Aquaveo 2020
+* Author: msouffront
+* Created On: April 18, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from django.utils.decorators import classproperty

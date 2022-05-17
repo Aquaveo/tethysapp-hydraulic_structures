@@ -2,8 +2,8 @@
 ********************************************************************************
 * Name: project_area_details.py
 * Author: gagelarsen
-* Created On: December 01, 2020
-* Copyright: (c) Aquaveo 2020
+* Created On: April 01, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 __all__ = ['ProjectAreaDetails']

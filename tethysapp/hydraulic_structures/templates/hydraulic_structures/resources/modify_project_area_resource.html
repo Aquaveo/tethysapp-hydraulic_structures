@@ -4,7 +4,7 @@
 {% block app_content %}
   <div class="row">
     <div class="col-md-12">
-      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ type_singular }}</h1>
+      <h1>{% if editing %}Editar{% else %}Nueva{% endif %} {{ type_singular }}</h1>
       <form id="new-resource-form" method="post" action="" {% if show_file_upload_field %}enctype="multipart/form-data"{% endif %}>
         {% csrf_token %}
         <div class="row">
@@ -48,7 +48,7 @@
                        type="file"
                        accept="{{ file_upload_accept }}"
                        {% if file_upload_multiple %}multiple{% endif %}>
-                <label for="input-file-upload" class="btn btn-default btn-file-input">Browse</label>
+                <label for="input-file-upload" class="btn btn-default btn-file-input">Explorar Archivos Locales</label>
               </div>
               <span class="help-block">{{ file_upload_error }}</span>
             </div>
@@ -65,4 +65,31 @@
       </form>
     </div>
   </div>
+{% endblock %}
+
+{% block app_navigation_items %}
+  <p style="margin-bottom: 5px;"><b>Nombre:</b></p>
+  <p>El nombre de la nueva {{ type_singular|lower }}.</p>
+  <li class="separator"></li>
+
+  <p style="margin-bottom: 5px;"><b>Tipo de Área:</b></p>
+  <p>Seleccione el tipo de área de división.</p>
+  <li class="separator"></li>
+
+  <p style="margin-bottom: 5px;"><b>Descripción:</b></p>
+  <p>Una descripción más detalladas del {{ type_singular|lower }}</p>
+  <li class="separator"></li>
+
+  <p style="margin-bottom: 5px;"><b>Organizaciones:</b></p>
+  <p>{{ type_plural }} va a ser accesible a los miembros de las organizaciones a las que el {{ type_singular|lower }} sea asignada.</p>
+  <li class="separator"></li>
+
+  {% if show_srid_field %}
+  <p style="margin-bottom: 5px;"><b>Sistema de Referencia Espacial:</b></p>
+  <p>
+    El sistema de referencia espacial usado para crear las capas del {{ type_singular|lower }}. Si no conoce
+    el sistema de referencia espacial, déjelo vacio. Para más información: <a href="http://spatialreference.org/">spatialref.org</a>.
+  </p>
+  <li class="separator"></li>
+  {% endif %}
 {% endblock %}

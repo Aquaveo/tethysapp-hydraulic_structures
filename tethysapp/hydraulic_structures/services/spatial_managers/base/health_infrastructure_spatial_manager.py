@@ -1,6 +1,5 @@
-from tethysext.atcore.services.resource_spatial_manager import ResourceSpatialManager
+from tethysapp.hydraulic_structures.services.spatial_managers.base import HydraulicStructureSpatialManager
 
-
-class HealthInfrastructureSpatialManager(ResourceSpatialManager):
+class HealthInfrastructureSpatialManager(HydraulicStructureSpatialManager):
     """Base SpatialManager class for HydraulicInfrastructureResources with methods specific to HydraulicInfrastructureResources. Subclasses need to define WORKSPACE and URI properties."""  # noqa: E501
     pass

@@ -1,8 +1,8 @@
 /*****************************************************************************
  * FILE:    model_selection_map_view.js
- * DATE:    August 27th, 2021
+ * DATE:    April 27th, 2022
  * AUTHOR:  Hoang Tran, Nathan Swain
- * COPYRIGHT: (c) Aquaveo 2021
+ * COPYRIGHT: (c) Aquaveo 2022
  * LICENSE:
  *****************************************************************************/
 

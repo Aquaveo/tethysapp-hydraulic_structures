@@ -4,7 +4,7 @@
 {% block app_content %}
   <div class="row">
     <div class="col-md-12">
-      <h1>{% if editing %}Edit{% else %}New{% endif %} {{ health_structure_type_spanish }}</h1>
+      <h1>{% if editing %}Editar{% else %}Nueva{% endif %} {{ type_singular }} de tipo "{{ health_structure_type_spanish }}"</h1>
       <form id="new-resource-form" method="post" action="" {% if show_file_upload_field %}enctype="multipart/form-data"{% endif %}>
         {% csrf_token %}
         <input type="hidden" id="health_structure_type" name="health_structure_type" value="{{ health_structure_type_spanish }}">
@@ -15,7 +15,7 @@
 
             {# DESCRIPTION FIELD #}
             <div class="form-group" id="resource-description-group">
-              <label for="resource-description">Description</label>
+              <label for="resource-description">Descripción</label>
               <textarea id="resource-description"
                         name="resource-description"
                         class="form-control"
@@ -43,16 +43,16 @@
                 {% if hydraulic_dam_year %}
                 {% gizmo hydraulic_dam_year %}
                 {% endif %}
-                
+
                 {# DAMS AND RESERVOIRS PURPOSES #}
                 {% if hydraulic_dam_height %}
                 {% gizmo hydraulic_dam_height %}
                 {% endif %}
-                
+
                 {# DAMS AND RESERVOIRS PURPOSES #}
                 {% if hydraulic_dam_volume %}
                 {% gizmo hydraulic_dam_volume %}
-                {% endif %}            
+                {% endif %}
             {% endif %}
 
             {# Well#}
@@ -74,22 +74,22 @@
             {% if show_gravity_pipe_line %}
               {% gizmo gravity_pipe_line_year %}
             {% endif %}
-            
+
             {# Distribution Network #}
             {% if show_distribution_network %}
               {% gizmo distribution_network_year %}
             {% endif %}
-            
+
             {# Water Treatment Plan #}
             {% if show_water_treatment_plan %}
               {% gizmo water_treatment_plan_year %}
             {% endif %}
-            
+
             {# Sewage Treatment Plan #}
             {% if show_sewage_treatment_plan %}
               {% gizmo sewage_treatment_plan_year %}
             {% endif %}
-            
+
             {# Sanitary Sewers #}
             {% if show_sanitary_sewer %}
               {% gizmo sanitary_sewer_year %}
@@ -114,18 +114,18 @@
                        type="file"
                        accept="{{ file_upload_accept }}"
                        {% if file_upload_multiple %}multiple{% endif %}>
-                <label for="input-file-upload" class="btn btn-default btn-file-input">Browse</label>
+                <label for="input-file-upload" class="btn btn-default btn-file-input">Explorar Archivos Locales</label>
               </div>
               <span class="help-block">{{ file_upload_error }}</span>
             </div>
             {% endif %}
             {{ file_upload_error }}
 
-            <a class="btn btn-default" href="{% url next_controller %}">Cancel</a>
+            <a class="btn btn-default" href="{% url next_controller %}">Cancelar</a>
             <input type="submit"
                    class="btn btn-success"
                    name="modify-resource-submit"
-                   value="{% if editing %}Save Changes{% else %}Create {{ type_singular }}{% endif %}">
+                   value="{% if editing %}Guardar Cambios{% else %}Crear {{ type_singular }}{% endif %}">
           </div>
         </div>
       </form>

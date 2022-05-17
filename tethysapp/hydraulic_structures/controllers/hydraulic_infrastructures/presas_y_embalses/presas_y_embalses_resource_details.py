@@ -1,8 +1,8 @@
 """
 * Name: project_area_details.py
 * Author: msouffront, htran
-* Created On: December 23, 2020
-* Copyright: (c) Aquaveo 2020
+* Created On: April 23, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 __all__ = ['HydraulicInfrastructureResourceDetails']

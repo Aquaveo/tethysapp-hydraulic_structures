@@ -1,9 +1,9 @@
 """
 ********************************************************************************
 * Name: __init__.py
-* Author: glarsen
-* Created On: December 02, 2020
-* Copyright: (c) Aquaveo 2020
+* Author: msouffront
+* Created On: April 02, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from .project_area_summary_tab import ProjectAreaSummaryTab  # noqa:F401

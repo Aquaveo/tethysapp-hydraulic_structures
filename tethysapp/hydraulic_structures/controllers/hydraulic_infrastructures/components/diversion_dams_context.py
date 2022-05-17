@@ -6,9 +6,9 @@ def diversion_dam_create_context(
     diversion_dam_year_init,
 ):
     diversion_dam_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="diversion_dam_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=diversion_dam_year_init,
     )
 

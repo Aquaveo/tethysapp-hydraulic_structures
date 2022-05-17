@@ -2,8 +2,8 @@
 ********************************************************************************
 * Name: model_summary_tab.py
 * Author: msouffront, htran
-* Created On: December 23, 2020
-* Copyright: (c) Aquaveo 2020
+* Created On: April 23, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from tethysext.atcore.controllers.resources import ResourceSummaryTab

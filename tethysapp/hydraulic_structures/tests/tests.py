@@ -72,7 +72,7 @@ class HydraulicStructuresTestCase(TethysTestCase):
         If you are testing against a controller that check for certain user info, you can create a fake test user and
         get a test client, like so:
 
-            #The test client simulates a browser that can navigate your app's url endpoints
+            #The test client simulates a Explorar Archivos Localesr that can navigate your app's url endpoints
             self.c = self.get_test_client()
             self.user = self.create_test_user(username="joe", password="secret", email="joe@some_site.com")
             # To create a super_user, use "self.create_test_superuser(*params)" with the same params
@@ -153,7 +153,7 @@ class HydraulicStructuresTestCase(TethysTestCase):
         user = self.create_test_user(username="joe", password="secret", email="joe@some_site.com")
         c.force_login(user)
 
-        # Have the test client "browse" to your home page
+        # Have the test client "Explorar Archivos Locales" to your home page
         response = c.get('/apps/hydraulic_structures/')  # The final '/' is essential for all pages/controllers
 
         # Test that the request processed correctly (with a 200 status code)

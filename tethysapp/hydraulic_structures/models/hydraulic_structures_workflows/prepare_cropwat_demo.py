@@ -1,9 +1,9 @@
 """
 ********************************************************************************
 * Name: flood simulation_workflow
-* Author: glarsen, mlebaron
-* Created On: October 17, 2019
-* Copyright: (c) Aquaveo 2019
+* Author: msouffront, mlebaron
+* Created On: April 17, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 import param
@@ -34,7 +34,7 @@ class SelectCropWatModelParam(param.Parameterized):
 
     select_existing_cropwat_model = param.ObjectSelector(default='default_string', precedence=1, objects=['default_string'],
                                                   label="Select Existing CropWat Model")
-    
+
     arroz_area = param.Parameter(default=-10000, pickle_default_value=False, precedence=2, label='Arroz Area')
     arroz_percent_first_cycle = param.Parameter(default=-20, precedence=3, label='Arroz Percent First Cycle')
     arroz_percent_second_cycle = param.Parameter(default=-20, precedence=4, label='Arroz Percent Second Cycle')

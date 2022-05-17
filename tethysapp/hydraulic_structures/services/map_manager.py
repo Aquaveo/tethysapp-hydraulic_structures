@@ -2,16 +2,17 @@
 ********************************************************************************
 * Name: map_manager
 * Author: msouffront
-* Created On: Nov 11, 2019
-* Copyright: (c) Aquaveo 2019
+* Created On: Nov 11, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 import json
 import requests
 import logging
 
+from geoalchemy2 import func
 from django.contrib import messages
-from tethys_sdk.gizmos import MapView, MVView, MVLayer
+from tethys_sdk.gizmos import MapView, MVView
 
 from tethysext.atcore.services.map_manager import MapManagerBase
 from tethysapp.hydraulic_structures.models.resources import HydraulicStructuresProjectAreaResource, HealthInfrastructureResource, HydraulicInfrastructureResource
@@ -111,18 +112,23 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 health_infrastructure_layers = []
                 hydraulic_infrastructure_layers = []
 
-                # Build irrigation zone layers
+                # Build area layers
                 project_areas = session.query(HydraulicStructuresProjectAreaResource) \
                     .filter(HydraulicStructuresProjectAreaResource.extent is not None) \
+                    .order_by(func.ST_Area(HydraulicStructuresProjectAreaResource.extent).desc()) \
                     .all()
+
+                # Make lagest area visible by default
+                is_first = True
                 for project_area in project_areas:
                     project_area_layer = self.build_boundary_layer_for_resource(
-                        project_area, layer_variable='project_area', selectable=True
+                        project_area, layer_variable='project_area', selectable=True, visible=is_first
                     )
                     if project_area_layer is not None:
                         project_area_layers.append(project_area_layer)
+                    is_first = False
 
-                map_layers.extend(project_area_layers)
+                map_layers.extend(project_area_layers[::-1])
 
                 # Build health_infrastructure layers
                 health_infrastructures = session.query(HealthInfrastructureResource) \
@@ -155,7 +161,7 @@ class HydraulicStructuresMapManager(MapManagerBase):
                     self.build_layer_group(
                         id='project_area_layers',
                         display_name='Áreas de División',
-                        layers=project_area_layers,
+                        layers=project_area_layers[::-1],  # smaller layer on top
                         layer_control='checkbox',
                         visible=True,
                     ),
@@ -186,7 +192,7 @@ class HydraulicStructuresMapManager(MapManagerBase):
 
         return map_view, base_extents, layer_groups
 
-    def build_boundary_layer_for_resource(self, resource, layer_variable="", selectable=False):
+    def build_boundary_layer_for_resource(self, resource, layer_variable="", selectable=False, visible=False):
         """
         Build the boundary MVLayer object for the given resource.
 
@@ -198,13 +204,16 @@ class HydraulicStructuresMapManager(MapManagerBase):
         Returns:
             MVLayer: the boundary layer.
         """
-        extents_geometry = resource.get_extent(extent_type='dict')
-        if extents_geometry is None:
-            return None
+
         if resource.get_attribute('gs_url'):
             geojson_response = requests.get(resource.get_attribute('gs_url')['geojson'])
             geojson = json.loads(geojson_response.text)
+            extents_geometry = geojson['features'][0]['geometry']
         else:
+            extents_geometry = resource.get_extent(extent_type='dict')
+            if extents_geometry is None:
+                return None
+
             geojson = {
                 'type': 'FeatureCollection',
                 'name': resource.name,
@@ -227,6 +236,7 @@ class HydraulicStructuresMapManager(MapManagerBase):
             layer_title=resource.name,
             layer_variable=layer_variable,
             layer_id=layer_id,
+            visible=visible,
             selectable=selectable,
             has_action=selectable,
             popup_title=resource.name if selectable else None,

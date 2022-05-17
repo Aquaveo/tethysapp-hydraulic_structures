@@ -9,7 +9,7 @@ def hydraulic_dam_create_context(
     hydraulic_dam_volume_init,
 ):
     hydraulic_dam_purposes = SelectInput(
-        display_text="Proposito",
+        display_text="Principal Propósito",
         name="hydraulic_dam_purposes",
         multiple=True,
         options=[
@@ -21,9 +21,9 @@ def hydraulic_dam_create_context(
         initial=hydraulic_dam_purposes_init,
     )
     hydraulic_dam_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="hydraulic_dam_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=hydraulic_dam_year_init,
     )
     hydraulic_dam_height = TextInput(
@@ -33,9 +33,9 @@ def hydraulic_dam_create_context(
         initial=hydraulic_dam_height_init,
     )
     hydraulic_dam_volume = TextInput(
-        display_text="Volumen Almacenado",
+        display_text="Volumen de Almacenamiento",
         name="hydraulic_dam_volume",
-        placeholder="volumen almacenado",
+        placeholder="volumen de almacenamiento",
         initial=hydraulic_dam_volume_init,
     )
 
@@ -50,9 +50,9 @@ def hydraulic_dam_create_context(
 
 def well_create_context(well_year_init):
     well_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="well_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=well_year_init,
     )
 
@@ -64,9 +64,9 @@ def well_create_context(well_year_init):
 
 def pipe_line_create_context(pipe_line_year_init):
     pipe_line_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="pipe_line_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=pipe_line_year_init,
     )
 
@@ -78,9 +78,9 @@ def pipe_line_create_context(pipe_line_year_init):
 
 def storage_tank_create_context(storage_tank_year_init):
     storage_tank_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="storage_tank_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=storage_tank_year_init,
     )
 
@@ -92,9 +92,9 @@ def storage_tank_create_context(storage_tank_year_init):
 
 def gravity_pipe_line_create_context(gravity_pipe_line_year_init):
     gravity_pipe_line_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="gravity_pipe_line_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=gravity_pipe_line_year_init,
     )
 
@@ -106,9 +106,9 @@ def gravity_pipe_line_create_context(gravity_pipe_line_year_init):
 
 def distribution_network_create_context(distribution_network_year_init):
     distribution_network_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="distribution_network_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=distribution_network_year_init,
     )
 

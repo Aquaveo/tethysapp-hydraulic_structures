@@ -1,9 +1,9 @@
 """
 ********************************************************************************
 * Name: __init__.py
-* Author: glarsen
-* Created On: November 20, 2020
-* Copyright: (c) Aquaveo 2020
+* Author: msouffront
+* Created On: April 20, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from tethysapp.hydraulic_structures.models.resources.hydraulic_infrastructure_resource import *  # noqa: F401, F403

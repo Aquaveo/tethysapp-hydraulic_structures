@@ -1,9 +1,9 @@
 """
 ********************************************************************************
 * Name: hydraulic_structures_workflow_view.py
-* Author: glarsen
-* Created On: Oct 09, 2019
-* Copyright: (c) Aquaveo 2019
+* Author: msouffront
+* Created On: Oct 09, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from django.shortcuts import reverse

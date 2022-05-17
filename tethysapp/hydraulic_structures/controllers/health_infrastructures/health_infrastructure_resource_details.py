@@ -1,8 +1,8 @@
 """
 * Name: model_resource_details.py
 * Author: msouffront, htran
-* Created On: January 26, 2021
-* Copyright: (c) Aquaveo 2021
+* Created On: January 26, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 __all__ = ['HealthInfrastructureResourceDetails']

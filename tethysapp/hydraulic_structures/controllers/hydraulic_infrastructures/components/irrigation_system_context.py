@@ -7,9 +7,9 @@ def intake_create_context(
     intake_year_init,
 ):
     intake_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="dams_and_resevoirs_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=intake_year_init,
     )
 
@@ -23,9 +23,9 @@ def main_irrigation_channel_create_context(
     main_irrigation_channel_year_init,
 ):
     main_irrigation_channel_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="main_irrigation_channel_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=main_irrigation_channel_year_init,
     )
 
@@ -39,9 +39,9 @@ def secondary_and_lateral_irrigation_system_create_context(
     secondary_and_lateral_irrigation_system_init,
 ):
     secondary_and_lateral_irrigation_system_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="secondary_and_lateral_irrigation_system_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=secondary_and_lateral_irrigation_system_init,
     )
 
@@ -55,9 +55,9 @@ def drainage_channel_create_context(
     drainage_channel_year_init,
 ):
     drainage_channel_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="drainage_channel_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=drainage_channel_year_init,
     )
 
@@ -71,9 +71,9 @@ def intake_storage_pond_create_context(
     intake_storage_pond_year_init,
 ):
     intake_storage_pond_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="intake_storage_pond_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=intake_storage_pond_year_init,
     )
 

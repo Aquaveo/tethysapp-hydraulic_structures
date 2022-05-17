@@ -4,9 +4,9 @@ from tethys_gizmos.gizmo_options.text_input import TextInput
 
 def water_treatment_plant_create_context(water_treatment_plant_year_init):
     water_treatment_plant_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="water_treatment_plant_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=water_treatment_plant_year_init,
     )
 
@@ -18,9 +18,9 @@ def water_treatment_plant_create_context(water_treatment_plant_year_init):
 
 def sewer_treatment_plant_create_context(sewer_treatment_plant_year_init):
     sewer_treatment_plant_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="sewer_treatment_plant_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=sewer_treatment_plant_year_init,
     )
 

@@ -1,9 +1,9 @@
 """
 ********************************************************************************
 * Name: project_area_resource.py
-* Author: glarsen
-* Created On: November 23, 2020
-* Copyright: (c) Aquaveo 2020
+* Author: msouffront
+* Created On: April 23, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from django.utils.decorators import classproperty

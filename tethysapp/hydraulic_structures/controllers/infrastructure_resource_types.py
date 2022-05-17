@@ -1,6 +1,6 @@
 # Hydraulic Infrastructure Type
 HYDRAULIC_INFRASTRUCTURE_TYPE = {
-    "DAMS_AND_RESEVOIRS": "Presas Y Embalses",
+    "DAMS_AND_RESEVOIRS": "Presas o Embalses",
     "HYDROELECTRIC_DAMS": "Presas Hidroeletricas",
     "IRRIGATION_SYSTEM_INTAKE": "Sistemas De Riego - Obras De Toma",
     "IRRIGATION_SYSTEM_MAIN_IRRIGATION_CHANNELS": "Sistemas De Riego - Canales De Riego Principales",

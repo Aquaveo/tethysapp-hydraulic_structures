@@ -5,9 +5,9 @@ from tethysapp.hydraulic_structures.controllers.infrastructure_resource_types im
 
 def sanitary_sewer_create_context(sanitary_sewer_year_init):
     sanitary_sewer_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="sanitary_sewer_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=sanitary_sewer_year_init,
     )
 
@@ -19,9 +19,9 @@ def sanitary_sewer_create_context(sanitary_sewer_year_init):
 
 def storm_sewer_create_context(storm_sewer_year_init):
     storm_sewer_year = TextInput(
-        display_text="Anio",
+        display_text="Año",
         name="sanitary_sewer_year",
-        placeholder="anio operacion",
+        placeholder="año operacion",
         initial=storm_sewer_year_init,
     )
 

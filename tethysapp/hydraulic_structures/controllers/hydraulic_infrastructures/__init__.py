@@ -2,8 +2,8 @@
 ********************************************************************************
 * Name: __init__.py
 * Author: msouffront, htran
-* Created On: Nov 23, 2020
-* Copyright: (c) Aquaveo 2020
+* Created On: Nov 23, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from tethysapp.hydraulic_structures.controllers.hydraulic_infrastructures.manage_hydraulic_infrastructure_resources import ManageHydraulicInfrastructureResources  # noqa:401

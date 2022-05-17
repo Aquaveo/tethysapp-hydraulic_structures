@@ -2,8 +2,8 @@
 ********************************************************************************
 * Name: manage_project_areas.py
 * Author: gagelarsen
-* Created On: December 01, 2020
-* Copyright: (c) Aquaveo 2020
+* Created On: April 01, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 import logging

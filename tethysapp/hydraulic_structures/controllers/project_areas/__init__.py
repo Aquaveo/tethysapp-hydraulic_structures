@@ -2,8 +2,8 @@
 ********************************************************************************
 * Name: __init__.py
 * Author: gagelarsen
-* Created On: December 02, 2020
-* Copyright: (c) Aquaveo 2020
+* Created On: April 02, 2022
+* Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
 from tethysapp.hydraulic_structures.controllers.project_areas.modify_project_area import ModifyProjectArea  # noqa:401
