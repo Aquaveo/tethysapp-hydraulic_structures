@@ -57,9 +57,9 @@ class ManageProjectAreas(ManageResources, FileCollectionsControllerMixin):
         # Delete geoserver layer
         gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
         resource_id = str(resource.id)
-        datastore_name = f'app_users_resources_extent_{resource_id}'
+        # datastore_name = f'app_users_resources_extent_{resource_id}'
         hydraulic_structures_spatial_manager = HydraulicStructuresSpatialManager(gs_engine)
         hydraulic_structures_spatial_manager.delete_extent_layer(
-            datastore_name=datastore_name,
+            datastore_name=HydraulicStructuresSpatialManager.DATASTORE,
             resource_id=resource_id
         )

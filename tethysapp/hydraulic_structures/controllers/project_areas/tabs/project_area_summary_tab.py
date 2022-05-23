@@ -47,8 +47,7 @@ class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
         fc_details = self.get_file_collections_details(session, resource)
         column2.extend(fc_details)
 
-        properties = ("", {'Propiedades': resource.attributes['area_properties']},
-        )
+        properties = ("", {'Propiedades': resource.get_attribute('area_properties')})
         column2.append(properties)
 
         return tab_content

@@ -10,6 +10,25 @@
         <input type="hidden" id="hydraulic_structure_type" name="hydraulic_structure_type" value="{{ hydraulic_structure_type }}">
         <div class="row">
           <div class="col-md-6">
+          {% if mass_upload %}
+            {# FILE UPLOAD FIELD #}
+            {% if show_file_upload_field %}
+            <div class="form-group {% if file_upload_error %}has-error{% endif %}" id="input-file-upload-wrapper">
+              <label class="control-label" for="input-file-upload">{{ file_upload_label }} (Debe contener un Shapefile o GeoJSON con múltiples geometrías)</label>
+              <div class="input-file-wrapper">
+                <input id="input-file-upload"
+                       class="file-input"
+                       name="input-file-upload"
+                       type="file"
+                       accept="{{ file_upload_accept }}"
+                       {% if file_upload_multiple %}multiple{% endif %}>
+                <label for="input-file-upload" class="btn btn-default btn-file-input">Explorar Archivos Locales</label>
+              </div>
+              <span class="help-block">{{ file_upload_error }}</span>
+            </div>
+            {% endif %}
+            {{ file_upload_error }}
+          {% else %}
             {# NAME FIELD #}
             {% gizmo resource_name_input %}
 
@@ -115,12 +134,12 @@
             </div>
             {% endif %}
             {{ file_upload_error }}
-
+          {% endif %}
             <a class="btn btn-default" href="{% url next_controller %}">Cancelar</a>
             <input type="submit"
                    class="btn btn-success"
                    name="modify-resource-submit"
-                   value="{% if editing %}Guardar Cambios{% else %}Crear {{ type_singular }}{% endif %}">
+                   value="{% if editing %}Guardar Cambios{% else %}Crear{% if not mas_upload %} {{ type_singular }}{% endif %}{% endif %}">
           </div>
         </div>
       </form>

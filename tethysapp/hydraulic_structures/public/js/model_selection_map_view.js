@@ -115,7 +115,7 @@ var MODEL_SELECTION_MAP_VIEW = (function() {
 
         // Check if layer is plottable
         let layer = m_layers[layer_name];
-        let resource_id = m_layers[layer_name]['tethys_data']['layer_id'];
+        let resource_id = layer_name.split('_')[layer_name.split('_').length - 1];
         if (!layer || !layer.tethys_data.has_action) {
             return;
         }

@@ -12,7 +12,7 @@ import json
 import zipfile
 from geoserver.catalog import Catalog as GSCatalog
 import geopandas as gpd
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import shape, MultiPolygon
 
 from tethysext.atcore.services.file_database import FileDatabaseClient
 from tethysext.atcore.controllers.app_users import ModifyResource
@@ -68,7 +68,17 @@ class ModifyHydraulicStructures(ModifyResource):
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
             file_collection = file_database.new_collection(meta={'display_name': 'Archivos de Soporte'})
 
+            # Get Spatial Manager
+            gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
+            spatial_manager = HydraulicStructuresSpatialManager(gs_engine)
+
+            # Get resource id
+            resource_id = str(resource.id)
+
             for filename in os.listdir(file_dir):
+                # Add all files and dirs to the file collection
+                file_collection.add_item(os.path.join(file_dir, filename))
+
                 if filename.endswith('.shp'):
                     shp_base = filename.replace('.shp', '')
                     shpfile_path = os.path.join(file_dir, filename)
@@ -76,45 +86,66 @@ class ModifyHydraulicStructures(ModifyResource):
                     shpfile = gpd.read_file(shpfile_path)
                     shpfile.to_file(json_path, driver='GeoJSON')
 
-                    self.add_extent_to_db(json_path, resource)
+                    geometry_type = self.add_extent_to_db(json_path, resource)
 
-                    # Upload extent to geoserver
-                    resource_id = str(resource.id)
+                    # try:
+                    #     # Create extent layer
+                    #     feature_name = f'app_users_resources_extent_{resource_id}'
+                    #     res = gs_engine.create_shapefile_resource(
+                    #         store_id=f'{HydraulicStructuresSpatialManager.WORKSPACE}:{feature_name}',
+                    #         shapefile_base=os.path.join(file_dir, shp_base),
+                    #         overwrite=True
+                    #     )
 
-                    try:
-                        # Define additional job parameters
-                        gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
+                    #     # update declared SRS and projection policy
+                    #     gs_catalog = GSCatalog(
+                    #         gs_engine.endpoint, username=gs_engine.username, password=gs_engine.password
+                    #     )
+                    #     shp_layer = gs_catalog.get_resource(
+                    #         feature_name, workspace=HydraulicStructuresSpatialManager.WORKSPACE
+                    #     )
+                    #     shp_layer.projection = 'EPSG:4326'
+                    #     shp_layer.projection_policy = 'REPROJECT_TO_DECLARED'
+                    #     gs_catalog.save(shp_layer)
 
-                        # Create extent layer
-                        feature_name = f'app_users_resources_extent_{resource_id}'
-                        res = gs_engine.create_shapefile_resource(
-                            store_id=f'{HydraulicStructuresSpatialManager.WORKSPACE}:{feature_name}',
-                            shapefile_base=os.path.join(file_collection.path, shp_base),
-                            overwrite=True
-                        )
-
-                        # update declared SRS and projection policy
-                        gs_catalog = GSCatalog(
-                            gs_engine.endpoint, username=gs_engine.username, password=gs_engine.password
-                        )
-                        shp_layer = gs_catalog.get_resource(
-                            feature_name, workspace=HydraulicStructuresSpatialManager.WORKSPACE
-                        )
-                        shp_layer.projection = 'EPSG:4326'
-                        shp_layer.projection_policy = 'REPROJECT_TO_DECLARED'
-                        gs_catalog.save(shp_layer)
-
-                        resource.set_attribute('gs_url', res['result']['wfs'])
-                    except Exception as e:
-                        log.error(
-                            'The following error occurred while trying to add shapefile layer to geoserver: {e}'
-                        )
+                    #     resource.set_attribute('gs_url', res['result']['wfs'])
+                    # except Exception as e:
+                    #     log.error(
+                    #         f'The following error occurred while trying to add shapefile layer to geoserver: {e}'
+                    #     )
                 elif filename.endswith('.geojson') or filename.endswith('.json'):
                     json_path = os.path.join(file_dir, filename)
-                    self.add_extent_to_db(json_path, resource)
+                    geometry_type = self.add_extent_to_db(json_path, resource)
 
-                # Add all files and dirs to the file collection
-                file_collection.add_item(os.path.join(file_dir, filename))
+            spatial_manager.create_extent_layer(
+                datastore_name=spatial_manager.DATASTORE,
+                resource_id=resource_id,
+                geometry_type=geometry_type,
+            )
+
+            # Add bbox on geoserver
+            gs_catalog = GSCatalog(
+                gs_engine.endpoint, username=gs_engine.username, password=gs_engine.password
+            )
+            feature_name = f'app_users_resources_extent_{resource_id}'
+            lyr_res = gs_catalog.get_resource(
+                feature_name, workspace=spatial_manager.WORKSPACE
+            )
+            # DR bbox in xmin, xmax, ymin, ymax
+            dr_bbox = ("-72.0045816157441", "-68.3231310096501", "17.4707186553058", "19.9322727546756", "EPSG:4326")
+            lyr_res.native_bbox = dr_bbox
+            lyr_res.latlon_bbox = dr_bbox
+            gs_catalog.save(lyr_res)
+
+            # Save wms endpoints to db
+            extent_lyr = gs_engine.get_layer(feature_name, spatial_manager.DATASTORE)
+            ows_endpoint = spatial_manager.gs_api.get_ows_endpoint(spatial_manager.WORKSPACE)
+            geojson_url = f'{ows_endpoint}?service=WFS&version=1.0.0&request=GetFeature&typeName= \
+                            {spatial_manager.WORKSPACE}:{feature_name}&maxFeatures=50&outputFormat=application%2Fjson'
+            resource.set_attribute('gs_url', {
+                'wms': extent_lyr['result']['wms'],
+                'wfs': {'geojson': geojson_url}
+            })
 
             # Associate file_collection with resource
             resource.file_collections.append(file_collection.instance)
@@ -148,20 +179,21 @@ class ModifyHydraulicStructures(ModifyResource):
             if "project_area" in resource.type:
                 polygon_list = []
                 property_list = []
-
                 for feature in features:
                     property_list.append(feature['properties'])
                     if feature['geometry']['type'] == 'Polygon':
-                        polygon_list.append(Polygon([tuple(l) for l in feature['geometry']['coordinates'][0]]))
+                        polygon_list.append(shape(feature['geometry'], ))
                     elif feature['geometry']['type'] == 'MultiPolygon':
-                        for polygon in feature['geometry']['coordinates']:
-                            polygon_list.append(Polygon([tuple(l) for l in polygon[0]]))
+                        for polygon in shape(feature['geometry']):
+                            polygon_list.append(polygon)
                 multi_polygon = MultiPolygon(polygon_list)
 
                 resource.set_attribute('area_properties', property_list)
+                srid = resource.get_attribute('srid')
+                resource.set_extent(obj=multi_polygon.wkt, object_format='wkt', srid=srid)
+                return 'MultiPolygon'
 
-            elif "hydraulic_infrastructure" in resource.type:
-                feature_list = []
-
-            srid = resource.get_attribute('srid')
-            resource.set_extent(obj=multi_polygon.wkt, object_format='wkt', srid=srid)
+            elif any(type in resource.type for type in ["hydraulic_infrastructure", "health_infrastructure"]):
+                srid = resource.get_attribute('srid')
+                resource.set_extent(obj=features[0]['geometry'], object_format='dict', srid=srid)
+                return features[0]['geometry']['type']

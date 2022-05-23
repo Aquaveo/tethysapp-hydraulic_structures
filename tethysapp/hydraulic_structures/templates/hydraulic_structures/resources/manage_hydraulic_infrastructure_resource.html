@@ -214,12 +214,18 @@
             <input type="hidden" name="tab_action" value="default">
             <div class="form-group">
               <label for="new-hydraulic-structure-type-select">Tipo de Estructura Hidráulica</label>
-              <select class="form-control" id="new-hydraulic-structure-type-select" name="hydraulic-structure-type">
+              <select class="form-control" id="new-hydraulic-structure-type-select" name="hydraulic-structure-type" required oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Por favor seleccione un tipo de estructura.')">
                 <option value="" disabled selected>Seleccione Estructura Hidráulica...</option>
                 {% for key, value in hydraulic_structure_types.items %}
                 <option value="{{ key }}">{{ value }}</option>
                 {% endfor %}
               </select>
+              <div style="padding-top:1em;">
+                <label class="flatmark pull-right"><span class="display-name">Carga Massiva</span>
+                  <input type="checkbox" name="mass-upload">
+                  <span class="checkmark checkbox"></span>
+                </label>
+            </div>
             </div>
           </form>
         </div>
@@ -239,6 +245,7 @@
   {{ block.super }}
   <link href="{% static 'atcore/app_users/css/app_users.css' %}" rel="stylesheet"/>
   <link href="{% static 'atcore/app_users/css/sort.css' %}" rel="stylesheet"/>
+  <link href="{% static 'atcore/css/flatmark.css' %}" rel="stylesheet"/>
   <link href="{% static 'atcore/css/center.css' %}" rel="stylesheet"/>
   <link href="{% static 'atcore/css/flex.css' %}" rel="stylesheet"/>
 {% endblock %}
@@ -250,4 +257,3 @@
   <script src="{% static 'atcore/js/delete_row.js' %}"></script>
   <script src="{% static 'atcore/app_users/js/sort.js' %}" type="text/javascript"></script>
 {% endblock %}
-

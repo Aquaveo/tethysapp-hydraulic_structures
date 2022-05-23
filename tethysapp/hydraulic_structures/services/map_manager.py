@@ -6,10 +6,12 @@
 * Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
+import re
 import json
 import requests
 import logging
-
+from shapely.geometry import shape
+import geopandas as gpd
 from geoalchemy2 import func
 from django.contrib import messages
 from tethys_sdk.gizmos import MapView, MVView
@@ -204,13 +206,29 @@ class HydraulicStructuresMapManager(MapManagerBase):
         Returns:
             MVLayer: the boundary layer.
         """
+        # Compute bbox
+        # bbox = [-72.0045816157441, 17.4707186553058, -68.3231310096501, 19.9322727546756]
+        extents_geometry = resource.get_extent(extent_type='dict')
+        srid = resource.get_attribute('srid') or 4326
+        wgs84 = gpd.GeoSeries({'geometry': shape(extents_geometry)}, crs=f'EPSG:{srid}').to_crs(4326)
+        bbox = wgs84.geometry.bounds.values[0].tolist()
 
         if resource.get_attribute('gs_url'):
-            geojson_response = requests.get(resource.get_attribute('gs_url')['geojson'])
-            geojson = json.loads(geojson_response.text)
-            extents_geometry = geojson['features'][0]['geometry']
+            wms_url = resource.get_attribute('gs_url')['wms']['png']
+            base, params = wms_url.split('?')
+            layer = f'{self.spatial_manager.WORKSPACE}:{re.search("layers=(.*?)&", params).group(1)}'
+            layer = self.build_wms_layer(
+                endpoint=base,
+                layer_name=layer,
+                layer_title=resource.name,
+                layer_variable=layer_variable,
+                visible=visible,
+                selectable=selectable,
+                has_action=selectable,
+                extent=bbox,
+                popup_title=resource.name if selectable else None
+            )
         else:
-            extents_geometry = resource.get_extent(extent_type='dict')
             if extents_geometry is None:
                 return None
 
@@ -226,22 +244,20 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 }]
             }
 
-        # Compute bbox
-        bbox = self.compute_bbox_for_extent(extents_geometry)
-        layer_id = str(resource.id)
-        layer_name = layer_id
-        layer = self.build_geojson_layer(
-            geojson=geojson,
-            layer_name=layer_name,
-            layer_title=resource.name,
-            layer_variable=layer_variable,
-            layer_id=layer_id,
-            visible=visible,
-            selectable=selectable,
-            has_action=selectable,
-            popup_title=resource.name if selectable else None,
-            extent=bbox,
-        )
+            layer_id = str(resource.id)
+            layer_name = layer_id
+            layer = self.build_geojson_layer(
+                geojson=geojson,
+                layer_name=layer_name,
+                layer_title=resource.name,
+                layer_variable=layer_variable,
+                layer_id=layer_id,
+                visible=visible,
+                selectable=selectable,
+                has_action=selectable,
+                popup_title=resource.name if selectable else None,
+                extent=bbox,
+            )
         return layer
 
     def compute_bbox_for_extent(self, polygon):
@@ -295,6 +311,15 @@ class HydraulicStructuresMapManager(MapManagerBase):
                 }}
             }},
             'Polygon': {'ol.style.Style': {
+                'stroke': {'ol.style.Stroke': {
+                    'color': color,
+                    'width': 2
+                }},
+                'fill': {'ol.style.Fill': {
+                    'color': 'rgba(255, 0, 0, 0.1)'
+                }}
+            }},
+            'MultiPolygon': {'ol.style.Style': {
                 'stroke': {'ol.style.Stroke': {
                     'color': color,
                     'width': 2

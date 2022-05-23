@@ -454,6 +454,7 @@ class ModifyHydraulicInfrastructureResource(ModifyHydraulicStructures):
 
             # populate custom type for each hydraulic infrastructure type
             if request.POST and "hydraulic-structure-type" in request.POST:
+                mass_upload = True if request.POST.get("mass-upload", None) else False
                 if request.POST["hydraulic-structure-type"]:
                     hydraulic_structure_type = request.POST["hydraulic-structure-type"]
                     show_dams_and_resevoirs = True if hydraulic_structure_type == "DAMS_AND_RESEVOIRS" else False
@@ -546,6 +547,7 @@ class ModifyHydraulicInfrastructureResource(ModifyHydraulicStructures):
             "file_upload_help": self.file_upload_help,
             "file_upload_accept": self.file_upload_accept,
             "hydraulic_structure_type": hydraulic_structure_type,
+            "mass_upload": mass_upload,
             "hydraulic_structure_type_spanish": HYDRAULIC_INFRASTRUCTURE_TYPE[hydraulic_structure_type],
             "show_dams_and_resevoirs": show_dams_and_resevoirs,
             "show_hydroelectric_dam": show_hydroelectric_dam,

@@ -36,11 +36,9 @@ class HydraulicStructureSpatialManager(ResourceSpatialManager):
 
                 wms_endpoint = self.get_wms_endpoint()
 
-                srid = resource.get_attribute('srid') or '4326'
-
                 layer_preview_url = f'{wms_endpoint}?service=WMS&version=1.1.0&request=GetMap&layers={layer_name}' \
                                     f'&bbox={extent[0]},{extent[1]},{extent[2]},{extent[3]}&width={width_resolution}' \
-                                    f'&height={height_resolution}&srs=EPSG:{srid}&format=image%2Fpng'
+                                    f'&height={height_resolution}&srs=EPSG:4326&format=image%2Fpng'
         except Exception:
             log.exception('An error occurred while trying to generate the preview image.')
 
