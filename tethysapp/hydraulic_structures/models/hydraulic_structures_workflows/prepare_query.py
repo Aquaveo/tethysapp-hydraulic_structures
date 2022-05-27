@@ -10,6 +10,8 @@ import param
 import panel as pn
 from geoalchemy2 import func
 
+from tethysapp.hydraulic_structures.models.hydraulic_structures_workflows.hydraulic_structures_spatial_rws \
+    import HydraulicStructuresSpatialInputRWS
 from tethysext.atcore.models.app_users import ResourceWorkflow
 from tethysext.atcore.models.resource_workflow_steps import FormInputRWS, SpatialInputRWS,\
     ResultsResourceWorkflowStep
@@ -89,6 +91,20 @@ class PrepareQueryWorkflow(ResourceWorkflow):
             }
         )
         workflow.steps.append(step1)
+
+        step10 = HydraulicStructuresSpatialInputRWS(
+            name='Seleccione Área',
+            order=10,
+            help='',
+            options={
+                'allow_drawing': False,
+                'allow_shapefile': False,
+            },
+            geoserver_name=geoserver_name,
+            map_manager=map_manager,
+            spatial_manager=spatial_manager
+        )
+        workflow.steps.append(step10)
 
         # # Verify Results
         # step2 = ResultsResourceWorkflowStep(

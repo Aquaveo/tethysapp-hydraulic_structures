@@ -56,7 +56,7 @@ class ManageProjectAreas(ManageResources, FileCollectionsControllerMixin):
         self.delete_file_collections(session=session, resource=resource, log=log)
 
         # Delete feature layers table
-        sql = text(f'DROP TABLE IF EXISTS {str(resource.id)}_feature_layers;')
+        sql = text(f'DROP TABLE IF EXISTS "{str(resource.id)}_feature_layers";')
         session.get_bind().execute(sql)
 
         # Delete geoserver layer
