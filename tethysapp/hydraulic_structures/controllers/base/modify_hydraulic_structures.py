@@ -56,10 +56,11 @@ class ModifyHydraulicStructures(ModifyResource):
         if not editing:
             files = resource.get_attribute('files')
             file_dir = os.path.dirname(files[0])
-            with zipfile.ZipFile(files[0], "r") as zip_ref:
-                zip_ref.extractall(file_dir)
-            # Remove zip file
-            os.remove(files[0])
+            if files[0].endswith('.zip'):
+                with zipfile.ZipFile(files[0], "r") as zip_ref:
+                    zip_ref.extractall(file_dir)
+                # Remove zip file
+                os.remove(files[0])
 
             # Get file database id
             file_database_id = app.get_custom_setting('file_database_id')
@@ -72,6 +73,9 @@ class ModifyHydraulicStructures(ModifyResource):
             gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
             spatial_manager = HydraulicStructuresSpatialManager(gs_engine)
 
+            # Get DB Engine
+            db_engine = session.get_bind()
+
             # Get resource id
             resource_id = str(resource.id)
 
@@ -80,10 +84,11 @@ class ModifyHydraulicStructures(ModifyResource):
                 file_collection.add_item(os.path.join(file_dir, filename))
 
                 if filename.endswith('.shp'):
-                    shp_base = filename.replace('.shp', '')
+                    # shp_base = filename.replace('.shp', '')
                     shpfile_path = os.path.join(file_dir, filename)
                     json_path = os.path.join(file_dir, '__extent__.geojson')
                     shpfile = gpd.read_file(shpfile_path)
+                    shpfile.to_postgis(f'{resource_id}_feature_layers', db_engine, if_exists='replace')
                     shpfile.to_file(json_path, driver='GeoJSON')
 
                     geometry_type = self.add_extent_to_db(json_path, resource)
@@ -115,6 +120,8 @@ class ModifyHydraulicStructures(ModifyResource):
                     #     )
                 elif filename.endswith('.geojson') or filename.endswith('.json'):
                     json_path = os.path.join(file_dir, filename)
+                    geojson = gpd.read_file(json_path)
+                    geojson.to_postgis(f'{resource_id}_feature_layers', db_engine, if_exists='replace')
                     geometry_type = self.add_extent_to_db(json_path, resource)
 
             spatial_manager.create_extent_layer(
@@ -131,10 +138,15 @@ class ModifyHydraulicStructures(ModifyResource):
             lyr_res = gs_catalog.get_resource(
                 feature_name, workspace=spatial_manager.WORKSPACE
             )
-            # DR bbox in xmin, xmax, ymin, ymax
-            dr_bbox = ("-72.0045816157441", "-68.3231310096501", "17.4707186553058", "19.9322727546756", "EPSG:4326")
-            lyr_res.native_bbox = dr_bbox
-            lyr_res.latlon_bbox = dr_bbox
+            # DR bbox in xmin, xmax, ymin, ymax (this is the order gsconfig)
+            # dr_bbox = ("-72.0045816157441", "-68.3231310096501", "17.4707186553058", "19.9322727546756", "EPSG:4326")
+            extents_geometry = resource.get_extent(extent_type='dict')
+            srid = resource.get_attribute('srid') or 4326
+            wgs84 = gpd.GeoSeries({'geometry': shape(extents_geometry)}, crs=f'EPSG:{srid}').to_crs(4326)
+            bbox = wgs84.geometry.bounds.values[0].tolist()
+            gsconfig_formatted_bbox = tuple([str(bbox[0]), str(bbox[2]), str(bbox[1]), str(bbox[3]),"EPSG:4326"])
+            lyr_res.native_bbox = gsconfig_formatted_bbox
+            lyr_res.latlon_bbox = gsconfig_formatted_bbox
             gs_catalog.save(lyr_res)
 
             # Save wms endpoints to db
@@ -152,7 +164,6 @@ class ModifyHydraulicStructures(ModifyResource):
 
             resource.set_status('create_extent_layer', 'Success')
             session.commit()
-            session.close()
 
             log.info('Layer uploaded.')
 
@@ -172,7 +183,7 @@ class ModifyHydraulicStructures(ModifyResource):
     @staticmethod
     def add_extent_to_db(file_path, resource):
         with open(file_path, 'r') as geojson_file:
-            geojson_data = json.load(geojson_file)
+            geojson_data = json.load(geojson_file, encoding="utf-8")
             # Use the first feature as extent.
             features = geojson_data['features']
 
@@ -195,5 +206,6 @@ class ModifyHydraulicStructures(ModifyResource):
 
             elif any(type in resource.type for type in ["hydraulic_infrastructure", "health_infrastructure"]):
                 srid = resource.get_attribute('srid')
-                resource.set_extent(obj=features[0]['geometry'], object_format='dict', srid=srid)
+                obj = json.dumps(features[0]['geometry'], ensure_ascii=False)
+                resource.set_extent(obj=obj, object_format='geojson', srid=srid)
                 return features[0]['geometry']['type']

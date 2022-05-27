@@ -7,6 +7,7 @@
 ********************************************************************************
 """
 import logging
+from sqlalchemy import text
 
 from django.shortcuts import reverse
 
@@ -54,10 +55,14 @@ class ManageProjectAreas(ManageResources, FileCollectionsControllerMixin):
         # Delete file collections
         self.delete_file_collections(session=session, resource=resource, log=log)
 
+        # Delete feature layers table
+        sql = text(f'DROP TABLE IF EXISTS {str(resource.id)}_feature_layers;')
+        session.get_bind().execute(sql)
+
         # Delete geoserver layer
         gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)
+
         resource_id = str(resource.id)
-        # datastore_name = f'app_users_resources_extent_{resource_id}'
         hydraulic_structures_spatial_manager = HydraulicStructuresSpatialManager(gs_engine)
         hydraulic_structures_spatial_manager.delete_extent_layer(
             datastore_name=HydraulicStructuresSpatialManager.DATASTORE,

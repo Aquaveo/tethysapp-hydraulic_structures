@@ -37,9 +37,7 @@ class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
 
         # Generate summary of the models and hydraulic_infrastructures associated with this irrigation zone
         md_summary = ('Recursos relacionados', {
-            'Workflows': len(resource.workflows),
-            'Estructuras Hidráulicas': len(resource.hydraulic_infrastructures),
-            'Estructuras Sanitarias': len(resource.hydraulic_infrastructures),
+            'Workflows': len(resource.workflows)
         })
         column1.append(md_summary)
 
@@ -83,7 +81,7 @@ class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
             file_database = FileDatabaseClient(session, app.get_file_database_root(), file_database_id)
             file_collection_client = file_database.get_collection(file_collection.id)
 
-            file_count = 0
+            file_count = -1
             total_size = 0
             # Get file count and total size
             for relative_root, dirs, files in file_collection_client.walk():
@@ -107,8 +105,8 @@ class ProjectAreaSummaryTab(ResourceSummaryTab, FileCollectionsControllerMixin):
                 'Espacio Total': total_size,
             })
 
-            # Append meta dict
-            file_collection_details[1].update(file_collection.meta)
+            # # Append meta dict
+            # file_collection_details[1].update(file_collection.meta)
 
             all_details.append(file_collection_details)
 

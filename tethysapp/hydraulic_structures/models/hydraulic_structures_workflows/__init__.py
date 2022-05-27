@@ -6,8 +6,8 @@
 * Copyright: (c) Aquaveo 2022
 ********************************************************************************
 """
-from .prepare_cropwat_demo import PrepareCropWatWorkflow  # noqa:F401, E501
+from .prepare_query import PrepareQueryWorkflow  # noqa:F401, E501
 
 HYDRAULICSTRUCTURES_WORKFLOWS = {
-    PrepareCropWatWorkflow.TYPE: PrepareCropWatWorkflow,
+    PrepareQueryWorkflow.TYPE: PrepareQueryWorkflow,
 }

@@ -1,0 +1,61 @@
+{% load static %}
+{% if user.is_staff %}
+<form id="new-workflow-form" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="tab_action" value="default">
+</form>
+<button type="submit" class="btn btn-fab btn-primary"
+   data-original-title="Nueva Consulta"
+   form="new-workflow-form" name="new-workflow">
+  <span class="glyphicon-plus" style='font-family: "Glyphicons Halflings"'></span>
+</button>
+{% endif %}
+
+{% if workflow_cards %}
+<div class="row">
+  <div class="col-md-12">
+    <div id="workflows-table">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th class="name">ID</th>
+            <th>Fecha de Creación</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for workflow_card in workflow_cards %}
+          <tr>
+            {% if user.is_staff %}
+            <td>{{ workflow_card.id }}</td>
+            {% endif %}
+            <td>{{ workflow_card.creator }}</td>
+            <td>{{ workflow_card.date_created }}</th>
+            <td class="btn-td">
+              <div class="btn-toolbar pull-right">
+                {% if workflow_card.can_delete %}
+                <a class="btn btn-default btn-delete-manage btn-delete btn-flat"
+                   href="javascript:void(0);"
+                   data-id="{{ workflow_card.id }}"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   title="Borrar"><span class="glyphicon glyphicon-trash"></span></a>
+                {% endif %}
+                <a class="btn btn-flat btn-workflow btn-{{ workflow_card.status.style }} btn-workflow-{{ workflow_card.status.style }}"
+                   href="{{ workflow_card.status.href }}"><span class="glyphicon-chevron-right" style='font-family: "Glyphicons Halflings"'></span></a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% else %}
+{% if user.is_staff %}
+  <div class="w-center-parent">
+    <h2 class="w-centered">Presione el butón "+" para iniciar una nueva consulta.</h2>
+  </div>
+{% endif %}
+{% endif %}

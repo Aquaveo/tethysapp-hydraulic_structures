@@ -24,41 +24,6 @@ class HydraulicStructuresProjectAreaResource(SpatialResource, FileCollectionMixi
     file_collections = relationship(FileCollection, secondary=resource_file_collection_association,
                                     backref=backref('project_area', uselist=False))
 
-    health_infrastructures = relationship(
-        'HealthInfrastructureResource',
-        primaryjoin='or_('
-                    'func.ST_Contains(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HealthInfrastructureResource.extent)).as_comparison(1, 2)'
-                    ','
-                    'func.ST_CoveredBy(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HealthInfrastructureResource.extent)).as_comparison(1, 2)'
-                    ','
-                    'func.ST_Overlaps(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HealthInfrastructureResource.extent)).as_comparison(1, 2)'
-                    ')',
-        backref=backref('health_infrastructure_project_areas', uselist=True),
-        viewonly=True,
-        uselist=True,
-        sync_backref=False
-    )
-    hydraulic_infrastructures = relationship(
-        'HydraulicInfrastructureResource',
-        primaryjoin='or_('
-                    'func.ST_Contains(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
-                    ','
-                    'func.ST_CoveredBy(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
-                    ','
-                    'func.ST_Overlaps(foreign(HydraulicStructuresProjectAreaResource.extent), '
-                    'remote(HydraulicInfrastructureResource.extent)).as_comparison(1, 2)'
-                    ')',
-        backref=backref('hydraulic_infrastructure_project_areas', uselist=True),
-        viewonly=True,
-        uselist=True,
-        sync_backref=False
-    )
-
     # Polymorphism
     __mapper_args__ = {
         'polymorphic_identity': TYPE,

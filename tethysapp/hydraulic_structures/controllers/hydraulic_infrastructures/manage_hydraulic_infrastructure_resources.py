@@ -1,4 +1,5 @@
 import logging
+from sqlalchemy import text
 
 from django.shortcuts import render, reverse
 
@@ -158,6 +159,12 @@ class ManageHydraulicInfrastructureResources(ManageResources, FileCollectionsCon
             }
         )
 
+        try:
+            context["hydraulic_structure_type_spanish"] = HYDRAULIC_INFRASTRUCTURE_TYPE[resource.\
+            get_attribute('hydraulic_structure_type').upper().replace(' ', '_')] or ''
+        except:
+            pass
+
         session.close()
         return render(request, self.template_name, context)
 
@@ -186,6 +193,10 @@ class ManageHydraulicInfrastructureResources(ManageResources, FileCollectionsCon
             Exception: raise an appropriate exception if an error occurs. The message will be sent as the 'error' field of the JsonResponse.
         """  # noqa: E501
         self.delete_file_collections(session=session, resource=resource, log=log)
+
+        # Delete feature layers table
+        sql = text(f'DROP TABLE IF EXISTS "{str(resource.id)}_feature_layers";')
+        session.get_bind().execute(sql)
 
         # Delete extent layer
         gs_engine = app.get_spatial_dataset_service(app.GEOSERVER_NAME, as_engine=True)

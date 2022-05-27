@@ -79,12 +79,12 @@
               <tr>
                 {# NAME VALUE #}
                 <td class="name" data-id="{{ resource.name }}" onclick="" style="cursor: pointer;">
-                  <a href="">{{ resource.name }}</a>
+                  <a href={{ resource.action_href }}>{{ resource.name }}</a>
                 </td>
 
-                {# NAME VALUE #}
+                {# TYPE VALUE #}
                 <td class="hydraulic_structure_type" data-id="hydraulic_structure_type" style="cursor: pointer;">
-                  <span>{{ resource.debugging.hydraulic_structure_type }}</span>
+                  <span>{{ hydraulic_structure_type_spanish }}</span>
                 </td>
 
                 {# DESCRIPTION VALUE #}
@@ -222,7 +222,7 @@
               </select>
               <div style="padding-top:1em;">
                 <label class="flatmark pull-right"><span class="display-name">Carga Massiva</span>
-                  <input type="checkbox" name="mass-upload">
+                  <input type="checkbox" name="bulk-upload">
                   <span class="checkmark checkbox"></span>
                 </label>
             </div>

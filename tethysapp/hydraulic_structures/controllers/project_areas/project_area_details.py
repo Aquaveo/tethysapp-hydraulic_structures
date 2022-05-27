@@ -24,8 +24,6 @@ class ProjectAreaDetails(TabbedResourceDetails):
     base_template = 'hydraulic_structures/base.html'
     tabs = (
         {'slug': 'summary', 'title': 'Resumen', 'view': ProjectAreaSummaryTab},
-        {'slug': 'hydraulic_infrastructures', 'title': 'Estructuras Hidráulicas', 'view': ProjectAreaHydraulicInfrastructuresTab},
-        {'slug': 'models', 'title': 'Estructuras Sanitarias', 'view': ProjectAreaHealthInfrastructuresTab},
         {'slug': 'files', 'title': 'Archivos', 'view': ProjectAreaFilesTab},
-        {'slug': 'workflows', 'title': 'Workflows', 'view': ProjectAreaWorkflowsTab},
+        {'slug': 'workflows', 'title': 'Consultas', 'view': ProjectAreaWorkflowsTab},
     )

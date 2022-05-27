@@ -1,10 +1,12 @@
 import logging
 import traceback
 import os
-import json
+import tempfile
 import shutil
 import zipfile
 import datetime
+import geopandas as gpd
+from shapely.geometry import Polygon, MultiPolygon
 
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -163,175 +165,283 @@ class ModifyHydraulicInfrastructureResource(ModifyHydraulicStructures):
             if request.POST and "modify-resource-submit" in request.POST:
                 # POST params
                 post_params = request.POST
-                resource_name = post_params.get("resource-name", "")
-                resource_description = post_params.get("resource-description", "")
-                resource_srid = post_params.get("spatial-ref-select", self.srid_default)
-                selected_organizations = post_params.getlist("assign-organizations", [])
-                hydraulic_structure_type = post_params.get("hydraulic_structure_type", "")
+                bulk_upload = True if post_params.get("bulk-upload", None) else False
 
-                files = request.FILES
+                if not bulk_upload:
+                    resource_name = post_params.get("resource-name", "")
+                    resource_description = post_params.get("resource-description", "")
+                    resource_srid = post_params.get("spatial-ref-select", self.srid_default)
+                    selected_organizations = post_params.getlist("assign-organizations", [])
+                    hydraulic_structure_type = post_params.get("hydraulic_structure_type", "")
 
-                # Dam Data
-                dams_and_resevoirs_purposes = post_params.getlist("dams_and_resevoirs_purposes", [])
-                dams_and_resevoirs_year = post_params.get("dams_and_resevoirs_year", "")
-                dams_and_resevoirs_height = post_params.get("dams_and_resevoirs_height", "")
-                dams_and_resevoirs_volume = post_params.get("dams_and_resevoirs_volume", "")
-
-                # Hydroelectric Dams
-                hydroelectric_dam_year = post_params.get("hydroelectric_dam_year", "")
-
-                # Irrigation System Intake
-                intake_year = post_params.get("intake_year", "")
-
-                # Irrigation System Intake
-                main_irrigation_channel_year = post_params.get("main_irrigation_channel_year", "")
-
-                # Irrigation System secondary and lateral irrigation channels
-                secondary_and_lateral_irrigation_channel_year = post_params.get(
-                    "secondary_and_lateral_irrigation_channel_year", ""
-                )
-
-                # Drainage Channels
-                drainage_channel_year = post_params.get("drainage_channel_year", "")
-
-                # Intake Storage Ponds
-                intake_storage_pond_year = post_params.get("intake_storage_pond_year", "")
-
-                # diversion_dams
-                diversion_dam_year = post_params.get("on_dam", "")
-
-                # river protection walls
-                river_protection_wall_year = post_params.get("river_protection_wall_year", "")
-
-                # Validate
-                if not resource_name:
-                    valid = False
-                    resource_name_error = "Debe especificar el nombre de la {}.".format(
-                        _Resource.DISPLAY_TYPE_SINGULAR.lower()
-                    )
-
-                # Must assign project to at least one organization
-                if len(selected_organizations) < 1:
-                    valid = False
-                    organization_select_error = "Debe asignar {} a al menos una organización.".format(
-                        _Resource.DISPLAY_TYPE_SINGULAR.lower()
-                    )
-
-                if (
-                    creating
-                    and self.include_file_upload
-                    and self.file_upload_required
-                    and "input-file-upload" not in files
-                ):
-                    valid = False
-                    file_upload_error = self.file_upload_error
-
-                if creating and self.include_srid and self.srid_required and not resource_srid:
-                    valid = False
-                    resource_srid_error = self.srid_error
-
-                if valid:
-                    # Look up existing resource
-                    if editing:
-                        resource = session.query(_Resource).get(resource_id)
-
-                        if not resource:
-                            raise ATCoreException("Unable to find {}".format(_Resource.DISPLAY_TYPE_SINGULAR.lower()))
-
-                        # Reset the organizations
-                        resource.organizations = []
-
-                    # Otherwise create a new project
-                    else:
-                        resource = _Resource()
-
-                    # Assign name and description and hydraulic structure type
-                    resource.name = resource_name
-                    resource.set_attribute(
-                        "hydraulic_structure_type", hydraulic_structure_type.replace("_", " ").title()
-                    )
-                    resource.description = resource_description
-
-                    # Assign project to organizations
-                    for organization_id in selected_organizations:
-                        organization = session.query(_Organization).get(organization_id)
-                        if organization:
-                            resource.organizations.append(organization)
-
-                    # Assign spatial reference id, handling change if editing
-                    if self.include_srid:
-                        old_srid = resource.get_attribute("srid")
-                        srid_changed = resource_srid != old_srid
-                        resource.set_attribute("srid", resource_srid)
-
-                        if editing and srid_changed:
-                            self.handle_srid_changed(
-                                session, request, request_app_user, resource, old_srid, resource_srid
-                            )
-
-                    # Dams and Structures
-                    if dams_and_resevoirs_purposes:
-                        resource.set_attribute("dams_and_resevoirs_purposes", dams_and_resevoirs_purposes)
-                    if dams_and_resevoirs_height:
-                        resource.set_attribute("dams_and_resevoirs_height", dams_and_resevoirs_height)
-                    if dams_and_resevoirs_volume:
-                        resource.set_attribute("dams_and_resevoirs_volume", dams_and_resevoirs_volume)
-                    if dams_and_resevoirs_year:
-                        resource.set_attribute("dams_and_resevoirs_year", dams_and_resevoirs_year)
+                    files = request.FILES
 
                     # Hydroelectric Dams
-                    if hydroelectric_dam_year:
-                        resource.set_attribute("hydroelectric_dam_year", hydroelectric_dam_year)
+                    hydroelectric_dam_year = post_params.get("hydroelectric_dam_year", "")
 
                     # Irrigation System Intake
-                    if intake_year:
-                        resource.set_attribute("intake_year", intake_year)
+                    intake_year = post_params.get("intake_year", "")
 
                     # Irrigation System Intake
-                    if main_irrigation_channel_year:
-                        resource.set_attribute("main_irrigation_channel_year", main_irrigation_channel_year)
+                    main_irrigation_channel_year = post_params.get("main_irrigation_channel_year", "")
 
                     # Irrigation System secondary and lateral irrigation channels
-                    if secondary_and_lateral_irrigation_channel_year:
-                        resource.set_attribute(
-                            "secondary_and_lateral_irrigation_channel_year",
-                            secondary_and_lateral_irrigation_channel_year,
-                        )
+                    secondary_and_lateral_irrigation_channel_year = post_params.get(
+                        "secondary_and_lateral_irrigation_channel_year", ""
+                    )
 
                     # Drainage Channels
-                    if drainage_channel_year:
-                        resource.set_attribute("drainage_channel_year", drainage_channel_year)
+                    drainage_channel_year = post_params.get("drainage_channel_year", "")
 
                     # Intake Storage Ponds
-                    if intake_storage_pond_year:
-                        resource.set_attribute("intake_storage_pond_year", intake_storage_pond_year)
+                    intake_storage_pond_year = post_params.get("intake_storage_pond_year", "")
 
                     # diversion_dams
-                    if diversion_dam_year:
-                        resource.set_attribute("diversion_dam_year", diversion_dam_year)
+                    diversion_dam_year = post_params.get("on_dam", "")
 
                     # river protection walls
-                    if river_protection_wall_year:
-                        resource.set_attribute("river_protection_wall_year", river_protection_wall_year)
+                    river_protection_wall_year = post_params.get("river_protection_wall_year", "")
 
-                    # Only do the following if creating a new project
-                    if creating:
-                        # Set created by
-                        resource.created_by = request_app_user.username
+                    # Validate
+                    if not resource_name:
+                        valid = False
+                        resource_name_error = "Debe especificar el nombre de la {}.".format(
+                            _Resource.DISPLAY_TYPE_SINGULAR.lower()
+                        )
 
-                        # Save resource
+                    # Must assign project to at least one organization
+                    if len(selected_organizations) < 1:
+                        valid = False
+                        organization_select_error = "Debe asignar {} a al menos una organización.".format(
+                            _Resource.DISPLAY_TYPE_SINGULAR.lower()
+                        )
+
+                    if (creating
+                        and self.include_file_upload
+                        and self.file_upload_required
+                        and "input-file-upload" not in files
+                    ):
+                        valid = False
+                        file_upload_error = self.file_upload_error
+
+                    if creating and self.include_srid and self.srid_required and not resource_srid:
+                        valid = False
+                        resource_srid_error = self.srid_error
+
+                    if valid:
+                        # Look up existing resource
+                        if editing:
+                            resource = session.query(_Resource).get(resource_id)
+
+                            if not resource:
+                                raise ATCoreException("Unable to find {}".format(_Resource.DISPLAY_TYPE_SINGULAR.lower()))
+
+                            # Reset the organizations
+                            resource.organizations = []
+
+                        # Otherwise create a new project
+                        else:
+                            resource = _Resource()
+
+                        # Assign name and description and hydraulic structure type
+                        resource.name = resource_name
+                        resource.set_attribute(
+                            "hydraulic_structure_type", hydraulic_structure_type.replace("_", " ").title()
+                        )
+                        resource.description = resource_description
+
+                        # Assign project to organizations
+                        for organization_id in selected_organizations:
+                            organization = session.query(_Organization).get(organization_id)
+                            if organization:
+                                resource.organizations.append(organization)
+
+                        # Assign spatial reference id, handling change if editing
+                        if self.include_srid:
+                            old_srid = resource.get_attribute("srid")
+                            srid_changed = resource_srid != old_srid
+                            resource.set_attribute("srid", resource_srid)
+
+                            if editing and srid_changed:
+                                self.handle_srid_changed(
+                                    session, request, request_app_user, resource, old_srid, resource_srid
+                                )
+
+                        # Dams and Structures
+                        if dams_and_resevoirs_purposes:
+                            resource.set_attribute("dams_and_resevoirs_purposes", dams_and_resevoirs_purposes)
+                        if dams_and_resevoirs_height:
+                            resource.set_attribute("dams_and_resevoirs_height", dams_and_resevoirs_height)
+                        if dams_and_resevoirs_volume:
+                            resource.set_attribute("dams_and_resevoirs_volume", dams_and_resevoirs_volume)
+                        if dams_and_resevoirs_year:
+                            resource.set_attribute("dams_and_resevoirs_year", dams_and_resevoirs_year)
+
+                        # Hydroelectric Dams
+                        if hydroelectric_dam_year:
+                            resource.set_attribute("hydroelectric_dam_year", hydroelectric_dam_year)
+
+                        # Irrigation System Intake
+                        if intake_year:
+                            resource.set_attribute("intake_year", intake_year)
+
+                        # Irrigation System Intake
+                        if main_irrigation_channel_year:
+                            resource.set_attribute("main_irrigation_channel_year", main_irrigation_channel_year)
+
+                        # Irrigation System secondary and lateral irrigation channels
+                        if secondary_and_lateral_irrigation_channel_year:
+                            resource.set_attribute(
+                                "secondary_and_lateral_irrigation_channel_year",
+                                secondary_and_lateral_irrigation_channel_year,
+                            )
+
+                        # Drainage Channels
+                        if drainage_channel_year:
+                            resource.set_attribute("drainage_channel_year", drainage_channel_year)
+
+                        # Intake Storage Ponds
+                        if intake_storage_pond_year:
+                            resource.set_attribute("intake_storage_pond_year", intake_storage_pond_year)
+
+                        # diversion_dams
+                        if diversion_dam_year:
+                            resource.set_attribute("diversion_dam_year", diversion_dam_year)
+
+                        # river protection walls
+                        if river_protection_wall_year:
+                            resource.set_attribute("river_protection_wall_year", river_protection_wall_year)
+
+                        # Only do the following if creating a new project
+                        if creating:
+                            # Set created by
+                            resource.created_by = request_app_user.username
+
+                            # Save resource
+                            session.commit()
+
+                            # Handle file upload
+                            if self.include_file_upload:
+                                self.handle_file_upload(session, request, request_app_user, files, resource)
+
                         session.commit()
 
-                        # Handle file upload
-                        if self.include_file_upload:
-                            self.handle_file_upload(session, request, request_app_user, files, resource)
+                        # Call post processing hook
+                        self.handle_resource_finished_processing(session, request, request_app_user, resource, editing)
 
-                    session.commit()
+                        # Sessions are closed in the finally block
+                        return redirect(reverse(next_controller))
+                elif bulk_upload:
+                    resource_srid = post_params.get('spatial-ref-select', self.srid_default)
+                    selected_organizations = post_params.getlist("assign-organizations", [])
+                    files = request.FILES
+                    with tempfile.TemporaryDirectory() as tmpdirname:
+                        with zipfile.ZipFile(files['input-file-upload'], 'r') as zip_ref:
+                            zip_ref.extractall(tmpdirname)
 
-                    # Call post processing hook
-                    self.handle_resource_finished_processing(session, request, request_app_user, resource, editing)
+                        for filename in os.listdir(tmpdirname):
+                            if filename.endswith('.shp'):
+                                shpfile_path = os.path.join(tmpdirname, filename)
+                                shpfile = gpd.read_file(shpfile_path)
+                                shpfile = shpfile.set_crs(f'epsg:{resource_srid}')
+                                shpfile.geometry = self.convert_3D_2D(shpfile.geometry)
+                                shpfile = shpfile.to_crs(4326)
+                                c = 1
+                                for i, row in shpfile.iterrows():
+                                    subset = gpd.GeoDataFrame(shpfile[:][i:i+1], crs=f'epsg:4326')
+                                    hydraulic_structure_type = post_params.get("hydraulic_structure_type", "")
+                                    # if hydraulic_structure_type == 'DAMS_AND_RESEVOIRS':
+                                    #     # Dam Data
+                                    #     dams_and_resevoirs_purposes = post_params.getlist("dams_and_resevoirs_purposes")
+                                    #     dams_and_resevoirs_year = post_params.get("dams_and_resevoirs_year", "")
+                                    #     dams_and_resevoirs_height = post_params.get("dams_and_resevoirs_height", "")
+                                    #     dams_and_resevoirs_volume = post_params.get("dams_and_resevoirs_volume", "")
 
-                    # Sessions are closed in the finally block
+                                    if len(selected_organizations) < 1:
+                                        valid = False
+                                        organization_select_error = "Debe asignar {} a al menos una organización.".format(
+                                            _Resource.DISPLAY_TYPE_SINGULAR.lower()
+                                        )
+
+                                    if (creating
+                                        and self.include_file_upload
+                                        and self.file_upload_required
+                                        and "input-file-upload" not in files
+                                    ):
+                                        valid = False
+                                        file_upload_error = self.file_upload_error
+
+                                    if creating and self.include_srid and self.srid_required and not resource_srid:
+                                        valid = False
+                                        resource_srid_error = self.srid_error
+
+                                    if valid:
+                                        if not editing:
+                                            resource = _Resource()
+
+                                        resource_name = row.get('NOMBRE', '')
+                                        resource_description = ''
+
+                                        # Assign name and description and hydraulic structure type
+                                        resource.name = resource_name
+                                        resource.set_attribute(
+                                            "hydraulic_structure_type", hydraulic_structure_type.replace("_", " ").title()
+                                        )
+                                        resource.description = resource_description
+
+                                        # Assign project to organizations
+                                        for organization_id in selected_organizations:
+                                            organization = session.query(_Organization).get(organization_id)
+                                            if organization:
+                                                resource.organizations.append(organization)
+
+                                        # Assign spatial reference id, handling change if editing
+                                        if self.include_srid:
+                                            old_srid = resource.get_attribute("srid")
+                                            srid_changed = resource_srid != old_srid
+                                            resource.set_attribute("srid", resource_srid)
+
+                                            if editing and srid_changed:
+                                                self.handle_srid_changed(
+                                                    session, request, request_app_user, resource, old_srid, resource_srid
+                                                )
+
+                                            # # Dams and Structures
+                                            # if dams_and_resevoirs_purposes:
+                                            #     resource.set_attribute("dams_and_resevoirs_purposes", dams_and_resevoirs_purposes)
+                                            # if dams_and_resevoirs_height:
+                                            #     resource.set_attribute("dams_and_resevoirs_height", dams_and_resevoirs_height)
+                                            # if dams_and_resevoirs_volume:
+                                            #     resource.set_attribute("dams_and_resevoirs_volume", dams_and_resevoirs_volume)
+                                            # if dams_and_resevoirs_year:
+                                            #     resource.set_attribute("dams_and_resevoirs_year", dams_and_resevoirs_year)
+
+                                        # Only do the following if creating a new project
+                                        if creating:
+                                            # Set created by
+                                            resource.created_by = request_app_user.username
+
+                                            # Save resource
+                                            session.commit()
+
+                                            # Handle file upload
+                                            if self.include_file_upload:
+                                                subset_path = os.path.join(tmpdirname, f'subset_{c}.geojson')
+                                                subset.to_file(subset_path, driver='GeoJSON')
+
+                                                app_workspace = self._app.get_app_workspace().path
+                                                file_upload_dir = os.path.join(app_workspace, str(resource.id))
+                                                if not os.path.exists(file_upload_dir):
+                                                    os.makedirs(file_upload_dir)
+                                                filename = os.path.join(file_upload_dir, f'subset_{c}.geojson')
+                                                shutil.copyfile(subset_path , filename)
+                                                resource.set_attribute('files', [filename])
+                                                c += 1
+                                        session.commit()
+
+                                        # Call post processing hook
+                                        self.handle_resource_finished_processing(session, request, request_app_user, resource, editing)
+
                     return redirect(reverse(next_controller))
 
             # Setup edit form fields
@@ -454,7 +564,7 @@ class ModifyHydraulicInfrastructureResource(ModifyHydraulicStructures):
 
             # populate custom type for each hydraulic infrastructure type
             if request.POST and "hydraulic-structure-type" in request.POST:
-                mass_upload = True if request.POST.get("mass-upload", None) else False
+                bulk_upload = True if request.POST.get("bulk-upload", None) else False
                 if request.POST["hydraulic-structure-type"]:
                     hydraulic_structure_type = request.POST["hydraulic-structure-type"]
                     show_dams_and_resevoirs = True if hydraulic_structure_type == "DAMS_AND_RESEVOIRS" else False
@@ -547,7 +657,7 @@ class ModifyHydraulicInfrastructureResource(ModifyHydraulicStructures):
             "file_upload_help": self.file_upload_help,
             "file_upload_accept": self.file_upload_accept,
             "hydraulic_structure_type": hydraulic_structure_type,
-            "mass_upload": mass_upload,
+            "bulk_upload": bulk_upload,
             "hydraulic_structure_type_spanish": HYDRAULIC_INFRASTRUCTURE_TYPE[hydraulic_structure_type],
             "show_dams_and_resevoirs": show_dams_and_resevoirs,
             "show_hydroelectric_dam": show_hydroelectric_dam,
@@ -572,3 +682,24 @@ class ModifyHydraulicInfrastructureResource(ModifyHydraulicStructures):
         context = self.get_context(context)
 
         return render(request, self.template_name, context)
+
+    @staticmethod
+    def convert_3D_2D(geometry):
+        '''
+        Takes a GeoSeries of 3D Multi/Polygons (has_z) and returns a list of 2D Multi/Polygons
+        '''
+        new_geo = []
+        for p in geometry:
+            if p.has_z:
+                if p.geom_type == 'Polygon':
+                    lines = [xy[:2] for xy in list(p.exterior.coords)]
+                    new_p = Polygon(lines)
+                    new_geo.append(new_p)
+                elif p.geom_type == 'MultiPolygon':
+                    new_multi_p = []
+                    for ap in p:
+                        lines = [xy[:2] for xy in list(ap.exterior.coords)]
+                        new_p = Polygon(lines)
+                        new_multi_p.append(new_p)
+                    new_geo.append(MultiPolygon(new_multi_p))
+        return new_geo

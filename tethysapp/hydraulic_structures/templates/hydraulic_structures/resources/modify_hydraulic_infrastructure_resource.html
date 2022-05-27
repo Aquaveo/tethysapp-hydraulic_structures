@@ -4,17 +4,25 @@
 {% block app_content %}
   <div class="row">
     <div class="col-md-12">
-      <h1>{% if editing %}Editar{% else %}Nueva{% endif %} {{ type_singular}} de tipo "{{ hydraulic_structure_type_spanish }}"</h1>
+      <h1>{% if editing %}Editar{% else %}Nuevas{% endif %} {{ type_plural }} de tipo "{{ hydraulic_structure_type_spanish }}"</h1>
       <form id="new-resource-form" method="post" action="" {% if show_file_upload_field %}enctype="multipart/form-data"{% endif %}>
         {% csrf_token %}
         <input type="hidden" id="hydraulic_structure_type" name="hydraulic_structure_type" value="{{ hydraulic_structure_type }}">
         <div class="row">
           <div class="col-md-6">
-          {% if mass_upload %}
+          {% if bulk_upload %}
             {# FILE UPLOAD FIELD #}
             {% if show_file_upload_field %}
             <div class="form-group {% if file_upload_error %}has-error{% endif %}" id="input-file-upload-wrapper">
-              <label class="control-label" for="input-file-upload">{{ file_upload_label }} (Debe contener un Shapefile o GeoJSON con múltiples geometrías)</label>
+              <input type="hidden" name="bulk-upload" value="bulk-upload">
+              {# ORGANIZATIONS FIELD #}
+              {% gizmo organization_select %}
+
+              {# SPATIAL REFERENCE FIELD #}
+              {% if show_srid_field %}
+                {% gizmo spatial_reference_select %}
+              {% endif %}
+              <label class="control-label" for="input-file-upload">{{ file_upload_label }} (Debe contener un Shapefile con múltiples geometrías)</label>
               <div class="input-file-wrapper">
                 <input id="input-file-upload"
                        class="file-input"
@@ -24,7 +32,6 @@
                        {% if file_upload_multiple %}multiple{% endif %}>
                 <label for="input-file-upload" class="btn btn-default btn-file-input">Explorar Archivos Locales</label>
               </div>
-              <span class="help-block">{{ file_upload_error }}</span>
             </div>
             {% endif %}
             {{ file_upload_error }}
@@ -139,7 +146,7 @@
             <input type="submit"
                    class="btn btn-success"
                    name="modify-resource-submit"
-                   value="{% if editing %}Guardar Cambios{% else %}Crear{% if not mas_upload %} {{ type_singular }}{% endif %}{% endif %}">
+                   value="{% if editing %}Guardar Cambios{% else %}Crear{% if not bulk_upload %} {{ type_singular }}{% else %} {{ type_plural }}{% endif %}{% endif %}">
           </div>
         </div>
       </form>
@@ -148,6 +155,7 @@
 {% endblock %}
 
 {% block app_navigation_items %}
+{% if not bulk_upload %}
   <p style="margin-bottom: 5px;"><b>Nombre:</b></p>
   <p>El nombre de la nueva {{ type_singular|lower }}.</p>
   <li class="separator"></li>
@@ -185,4 +193,5 @@
 
   <li class="separator"></li>
   {% endif %}
+{% endif %}
 {% endblock %}
